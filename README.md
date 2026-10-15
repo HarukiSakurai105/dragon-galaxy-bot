@@ -1,0 +1,63 @@
+# Dragon Galaxy Community Bot
+
+Bot Discord riêng cho **🐉🪐Động Rồng Galaxy🌸❄**, được tạo từ file scan ngày 15/10/2026.
+
+## Cấu trúc nguồn
+
+- Snapshot gốc: `template/server-structure.json` và `template/server-structure.md`.
+- 80 role trong báo cáo; bot tự bỏ qua `@everyone` và role managed của bot/integration khác.
+- 14 category, 51 kênh chat/forum/announcement và 10 kênh voice/stage.
+- Permission overwrite được ánh xạ theo tên role, nên có thể dùng trên server gốc hoặc server mới.
+
+## Tính năng
+
+- `/setup`:
+  - **Chỉ tạo phần còn thiếu**: không sửa/xóa cấu trúc hiện có.
+  - **Đồng bộ snapshot**: cập nhật role, permission, kênh và thứ tự; không xóa role/kênh ngoài snapshot.
+- `/scan_server`: xuất báo cáo Markdown + JSON và link tải trực tiếp.
+- `/panel`: bảng xác minh thành viên hoặc ticket hỗ trợ.
+- Ticket riêng tư, Staff xử lý, đóng xong tự xóa sau 5 phút.
+- Welcome/leave log, thông báo, cấp/gỡ role, clear, timeout, kick và ban.
+- Đa server, không cần `GUILD_ID`; dữ liệu mỗi server được lưu riêng.
+
+## Cài đặt
+
+Yêu cầu Node.js 20 trở lên.
+
+```bash
+npm install
+```
+
+Sao chép `.env.example` thành `.env`, rồi điền:
+
+```env
+DISCORD_TOKEN=token_bot
+CLIENT_ID=application_id
+TIMEZONE=Asia/Ho_Chi_Minh
+BRAND_NAME=Động Rồng Galaxy
+BRAND_COLOR=FF8FDB
+```
+
+Trong Discord Developer Portal, bật **Server Members Intent**. Link mời bot phải có `bot` và `applications.commands`; lần setup đầu nên cấp `Administrator`. Kéo role bot lên trên mọi role mà bot cần tạo, sửa hoặc cấp.
+
+## Chạy
+
+Windows: nhấp đúp `CHAY-BOT.cmd`.
+
+Termux/Linux:
+
+```bash
+npm install
+npm start
+```
+
+Sau khi bot online, chủ server chạy `/setup` → **Chỉ tạo phần còn thiếu** trước. Chỉ dùng chế độ đồng bộ khi đã kiểm tra backup và role bot nằm cao nhất.
+
+## An toàn
+
+- Bot không có lệnh xóa toàn bộ server.
+- Role/kênh ngoài snapshot không bị xóa.
+- Role managed của bot khác không được tạo lại.
+- Snapshot chứa ID và permission riêng tư; chỉ chia sẻ repository với người tin tưởng.
+- Một số role trong snapshot có quyền `Administrator`; hãy kiểm tra kỹ trước khi đồng bộ sang server khác.
+

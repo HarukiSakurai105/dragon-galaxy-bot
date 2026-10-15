@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: dragon-galaxy-bot
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20.19.0
+      - key: DISCORD_TOKEN
+        sync: false
+      - key: CLIENT_ID
+        sync: false
+      - key: TIMEZONE
+        value: Asia/Ho_Chi_Minh
+      - key: BRAND_NAME
+        value: Động Rồng Galaxy
+      - key: BRAND_COLOR
+        value: FF8FDB
+
