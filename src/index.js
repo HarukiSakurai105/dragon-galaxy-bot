@@ -9,7 +9,7 @@ validateConfig();
 const templateInfo = validateSnapshot();
 
 const health = { startedAt: new Date().toISOString(), discordReady: false, botTag: null, guildCount: 0, template: templateInfo };
-const port = Number(process.env.PORT || 3000);
+const port = Number(process.env.PORT || 3001);
 const healthServer = http.createServer((request, response) => {
   if (request.url !== '/' && request.url !== '/health') {
     response.writeHead(404, { 'content-type': 'application/json; charset=utf-8' });
@@ -62,4 +62,3 @@ process.once('SIGTERM', () => shutdown('SIGTERM'));
 process.once('SIGINT', () => shutdown('SIGINT'));
 
 client.login(config.token);
-

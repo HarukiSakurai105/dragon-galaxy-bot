@@ -36,6 +36,7 @@ CLIENT_ID=application_id
 TIMEZONE=Asia/Ho_Chi_Minh
 BRAND_NAME=Động Rồng Galaxy
 BRAND_COLOR=FF8FDB
+PORT=3001
 ```
 
 Trong Discord Developer Portal, bật **Server Members Intent**. Link mời bot phải có `bot` và `applications.commands`; lần setup đầu nên cấp `Administrator`. Kéo role bot lên trên mọi role mà bot cần tạo, sửa hoặc cấp.
@@ -53,6 +54,8 @@ npm start
 
 Sau khi bot online, chủ server chạy `/setup` → **Chỉ tạo phần còn thiếu** trước. Chỉ dùng chế độ đồng bộ khi đã kiểm tra backup và role bot nằm cao nhất.
 
+Bot mới mặc định dùng health port `3001`, nên có thể chạy cùng máy với bot UPD đang dùng port `3000`.
+
 ## An toàn
 
 - Bot không có lệnh xóa toàn bộ server.
@@ -60,4 +63,3 @@ Sau khi bot online, chủ server chạy `/setup` → **Chỉ tạo phần còn t
 - Role managed của bot khác không được tạo lại.
 - Snapshot chứa ID và permission riêng tư; chỉ chia sẻ repository với người tin tưởng.
 - Một số role trong snapshot có quyền `Administrator`; hãy kiểm tra kỹ trước khi đồng bộ sang server khác.
-

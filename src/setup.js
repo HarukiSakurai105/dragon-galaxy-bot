@@ -30,7 +30,7 @@ function mapOverwrites(guild, overwrites, rolesByName, roleMap) {
       else targetId = roleMap[item.id]
         || (guild.id === snapshot.server.id && guild.roles.cache.has(item.id) ? item.id : null)
         || rolesByName.get(item.targetName)?.id;
-    } else if (guild.id === snapshot.server.id) {
+    } else if (guild.id === snapshot.server.id && guild.members.cache.has(item.id)) {
       targetId = item.id;
     }
     if (!targetId) continue;
@@ -137,7 +137,7 @@ async function orderStructure(guild, roleMap, channelMap, warnings) {
 }
 
 export async function setupFromSnapshot(guild, { sync = false, progress = async () => {} } = {}) {
-  await Promise.all([guild.roles.fetch(), guild.channels.fetch()]);
+  await Promise.all([guild.roles.fetch(), guild.channels.fetch(), guild.members.fetch().catch(() => null)]);
   const stored = await getGuildData(guild.id);
   const roleMap = { ...(stored.roles || {}) };
   const channelMap = { ...(stored.channels || {}) };
@@ -201,4 +201,3 @@ export async function setupFromSnapshot(guild, { sync = false, progress = async 
     warnings
   };
 }
-
