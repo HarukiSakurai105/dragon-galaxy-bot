@@ -59,28 +59,28 @@ Tạo từ snapshot: 2026-10-15T04:27:04.446Z
 - `1182156193431560292` — **⛏️ ✿ 𝓜𝓲𝓷𝓮𝓬𝓻𝓪𝓯𝓽 𝓢𝓥 ✿** → **🧱・Minecraft Server**
 - `1117746370791624725` — **🤖 ✿ 𝓑𝓸𝓽 ✿** → **🤖・Bot**
 - `1477335395686420601` — **Người Đặc Biệt** → **💎・Người Đặc Biệt**
-- `1175522908190281910` — **🖤りん❄️** → **🖤・Rin**
 - `1178406728069554276` — **🍱 𝓑𝓑𝓠 𝓜𝓪𝓷𝓪𝓰𝓮𝓻** → **🍱・BBQ Manager**
 - `1179113994263470213` — **🔧 ✿ 𝓜𝓸𝓭 𝓨𝓸𝓾𝓣𝓾𝓫𝓮 ✿** → **🔧・Moderator YouTube**
 - `1189470324413173802` — **🐉 ✿ 𝓓𝓻𝓪𝓰𝓸𝓷 𝓜𝓪𝓲𝓭 ✿** → **🐉・Dragon Staff**
-- `1117740722163028048` — **🔰 ✿ 𝓜𝓸𝓭𝓮𝓻𝓪𝓽𝓸𝓻 ✿** → **🔰・Moderator**
 - `1555520206921801758` — **Quản Lý của Vtuber khác** → **🎭・Quản Lý Vtuber Khác**
-- `1117739533543415890` — **🌸 𝓢𝓪𝓴𝓾𝓻𝓪 𝓜𝓪𝓼𝓽𝓮𝓻** → **🌸・Galaxy Master**
+- `1117740722163028048` — **🔰 ✿ 𝓜𝓸𝓭𝓮𝓻𝓪𝓽𝓸𝓻 ✿** → **🔰・Moderator**
 - `1555520791137751100` — **Quản Lý của Aiko** → **👑・Quản Lý Aiko**
+- `1175522908190281910` — **🖤りん❄️** → **🖤・Rin**
+- `1117739533543415890` — **🌸 𝓢𝓪𝓴𝓾𝓻𝓪 𝓜𝓪𝓼𝓽𝓮𝓻** → **🌸・Galaxy Master**
 
 ## Role giữ nguyên tên (0)
 
 
 ## Thứ tự role sau setup (cao xuống thấp)
 
-1. **👑・Quản Lý Aiko**
-2. **🌸・Galaxy Master**
-3. **🎭・Quản Lý Vtuber Khác**
+1. **🌸・Galaxy Master**
+2. **🖤・Rin**
+3. **👑・Quản Lý Aiko**
 4. **🔰・Moderator**
-5. **🐉・Dragon Staff**
-6. **🔧・Moderator YouTube**
-7. **🍱・BBQ Manager**
-8. **🖤・Rin**
+5. **🎭・Quản Lý Vtuber Khác**
+6. **🐉・Dragon Staff**
+7. **🔧・Moderator YouTube**
+8. **🍱・BBQ Manager**
 9. **💎・Người Đặc Biệt**
 10. **🤖・Bot**
 11. **🧱・Minecraft Server**
@@ -126,14 +126,14 @@ Tạo từ snapshot: 2026-10-15T04:27:04.446Z
 
 ## Permission quản trị được chuẩn hóa
 
-- **👑・Quản Lý Aiko**: `Administrator`
 - **🌸・Galaxy Master**: `Administrator`
-- **🎭・Quản Lý Vtuber Khác**: `ViewAuditLog`, `ManageGuild`, `ManageRoles`, `ManageChannels`, `ManageMessages`, `ManageThreads`, `ManageNicknames`, `ManageWebhooks`, `ManageEvents`, `KickMembers`, `BanMembers`, `ModerateMembers`, `MuteMembers`, `DeafenMembers`, `MoveMembers`
+- **🖤・Rin**: không có quyền quản trị đặc biệt
+- **👑・Quản Lý Aiko**: `Administrator`
 - **🔰・Moderator**: `ViewAuditLog`, `ManageRoles`, `ManageChannels`, `ManageMessages`, `ManageThreads`, `ManageNicknames`, `KickMembers`, `BanMembers`, `ModerateMembers`, `MuteMembers`, `DeafenMembers`, `MoveMembers`
+- **🎭・Quản Lý Vtuber Khác**: `ViewAuditLog`, `ManageGuild`, `ManageRoles`, `ManageChannels`, `ManageMessages`, `ManageThreads`, `ManageNicknames`, `ManageWebhooks`, `ManageEvents`, `KickMembers`, `BanMembers`, `ModerateMembers`, `MuteMembers`, `DeafenMembers`, `MoveMembers`
 - **🐉・Dragon Staff**: `ViewAuditLog`, `ManageRoles`, `ManageChannels`, `ManageMessages`, `ManageThreads`, `ManageNicknames`, `KickMembers`, `BanMembers`, `ModerateMembers`, `MuteMembers`, `DeafenMembers`, `MoveMembers`
 - **🔧・Moderator YouTube**: `ManageMessages`, `ManageThreads`, `ManageEvents`, `MoveMembers`
 - **🍱・BBQ Manager**: `ManageMessages`, `ManageThreads`, `ManageEvents`, `MoveMembers`
-- **🖤・Rin**: không có quyền quản trị đặc biệt
 - **💎・Người Đặc Biệt**: không có quyền quản trị đặc biệt
 
 ## Category được đổi tên (14)

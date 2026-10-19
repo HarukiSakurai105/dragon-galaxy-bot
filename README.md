@@ -68,6 +68,7 @@ Bot mới mặc định dùng health port `3001`, nên có thể chạy cùng m�
 - Bot không có lệnh xóa toàn bộ server.
 - Role/kênh ngoài snapshot không bị xóa.
 - Chỉ `👑・Quản Lý Aiko` và `🌸・Galaxy Master` được cấp Administrator; các cấp quản lý khác dùng permission giới hạn theo nhiệm vụ.
+- Bốn role cao nhất theo thứ tự: `🌸・Galaxy Master` → `🖤・Rin` → `👑・Quản Lý Aiko` → `🔰・Moderator`.
 - Kênh trong snapshot được đổi tên/di chuyển tại chỗ, vì vậy tin nhắn và lịch sử chat vẫn còn nguyên.
 - Role trong snapshot được sửa tại chỗ, không xóa/tạo lại nên membership của thành viên vẫn còn nguyên.
 - Role managed của bot khác không được tạo lại.
