@@ -15,6 +15,35 @@ function themedOverwrites(overwrites = []) {
   }));
 }
 
+function stripTreeDecoration(name) {
+  return String(name)
+    .replace(/^╔★・/, '')
+    .replace(/・★╗$/, '')
+    .replace(/^[╭├╰]・/, '')
+    .trim();
+}
+
+function decorateCategoryName(name) {
+  return `╔★・${stripTreeDecoration(name)}・★╗`;
+}
+
+function decorateChannelTree(channels) {
+  const siblingsByParent = new Map();
+  for (const channel of channels) {
+    const key = channel.parentId || '__root__';
+    const siblings = siblingsByParent.get(key) || [];
+    siblings.push(channel);
+    siblingsByParent.set(key, siblings);
+  }
+
+  return channels.map(channel => {
+    const siblings = siblingsByParent.get(channel.parentId || '__root__');
+    const index = siblings.indexOf(channel);
+    const branch = siblings.length === 1 || index === siblings.length - 1 ? '╰' : index === 0 ? '╭' : '├';
+    return { ...channel, name: `${branch}・${stripTreeDecoration(channel.name)}` };
+  });
+}
+
 export const roleSpecs = snapshot.roles
   .filter(role => !role.managed && role.name !== '@everyone')
   .map(role => ({ ...role, originalName: role.name, name: communityTheme.roleNames[role.id] || role.name }))
@@ -62,10 +91,12 @@ const additionalChannelSpecs = (communityTheme.additionalChannels || []).map(cha
 }));
 
 export const categorySpecs = [...scannedCategorySpecs, ...additionalCategorySpecs]
-  .sort((a, b) => a.position - b.position);
+  .sort((a, b) => a.position - b.position)
+  .map(category => ({ ...category, name: decorateCategoryName(category.name) }));
 
-export const channelSpecs = [...scannedChannelSpecs, ...additionalChannelSpecs]
-  .sort((a, b) => a.position - b.position);
+export const channelSpecs = decorateChannelTree(
+  [...scannedChannelSpecs, ...additionalChannelSpecs].sort((a, b) => a.position - b.position)
+);
 
 export function validateSnapshot() {
   if (!snapshot.server?.id || !snapshot.server?.name) throw new Error('Template thiếu thông tin server.');
@@ -82,6 +113,10 @@ export function validateSnapshot() {
   if (missingTheme.length) throw new Error(`Theme Aikon thiếu ${missingTheme.length} kênh.`);
   const invalidChannelNames = themedChannels.filter(channel => styledFont.test(channel.name));
   if (invalidChannelNames.length) throw new Error(`Kênh vẫn còn font kiểu: ${invalidChannelNames.map(channel => channel.name).join(', ')}`);
+  const invalidCategories = categorySpecs.filter(category => !category.name.startsWith('╔★・') || !category.name.endsWith('・★╗'));
+  if (invalidCategories.length) throw new Error(`Category chưa đồng bộ trang trí: ${invalidCategories.map(category => category.name).join(', ')}`);
+  const invalidTreeChannels = channelSpecs.filter(channel => !/^[╭├╰]・/.test(channel.name));
+  if (invalidTreeChannels.length) throw new Error(`Phòng chưa đồng bộ nhánh trang trí: ${invalidTreeChannels.map(channel => channel.name).join(', ')}`);
   if (!roleSpecs.some(role => role.name === communityTheme.fandomRoleName)) throw new Error(`Không tìm thấy role fandom ${communityTheme.fandomRoleName}.`);
   return {
     server: communityTheme.serverName,

@@ -19,7 +19,7 @@ Bot Discord riêng cho **🐉🪐Động Rồng Galaxy🌸❄**, được tạo 
 - `npm run preview-changes`: xuất `CHANGE-PREVIEW.md` liệt kê tên cũ → tên mới trước khi chạy setup.
 - `/panel`: bảng xác minh thành viên hoặc ticket hỗ trợ.
 - Ticket riêng tư, Staff xử lý, đóng xong tự xóa sau 5 phút.
-- Bổ sung khu `╔★・SẢNH CHÍNH・★╗` với 9 phòng trang trí theo phong cách nhánh cây giống mẫu Discord.
+- Toàn bộ 15 category dùng kiểu `╔★・TÊN SẢNH・★╗`; toàn bộ 70 phòng dùng nhánh `╭` / `├` / `╰` giống mẫu Discord.
 - Welcome/leave log, thông báo, cấp/gỡ role, clear, timeout, kick và ban.
 - Đa server, không cần `GUILD_ID`; dữ liệu mỗi server được lưu riêng.
 
@@ -55,7 +55,7 @@ npm install
 npm start
 ```
 
-Sau khi bot online, chủ server chạy `/setup` → **Tái cấu trúc an toàn — giữ chat và role thành viên**. Bot sẽ giữ tên server đúng là **🐉🪐Động Rồng Galaxy🌸❄**, dùng **🌌・Aikon** làm role fandom, đổi toàn bộ 50 role cộng đồng về font thường có icon, đổi tên toàn bộ 75 category/kênh từ bản scan ngay trên ID cũ và tạo thêm 1 category cùng 9 phòng trang trí.
+Sau khi bot online, chủ server chạy `/setup` → **Tái cấu trúc an toàn — giữ chat và role thành viên**. Bot sẽ giữ tên server đúng là **🐉🪐Động Rồng Galaxy🌸❄**, dùng **🌌・Aikon** làm role fandom, đổi toàn bộ 50 role cộng đồng về font thường có icon, trang trí toàn bộ category/phòng theo cùng một kiểu nhánh cây, đổi tên 75 category/kênh cũ ngay trên ID cũ và tạo thêm 1 category cùng 9 phòng.
 
 Bot mới mặc định dùng health port `3001`, nên có thể chạy cùng máy với bot UPD đang dùng port `3000`.
 
