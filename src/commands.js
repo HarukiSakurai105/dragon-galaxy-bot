@@ -6,7 +6,8 @@ export const commandData = [
       { name: 'Chỉ tạo phần còn thiếu', value: 'missing' },
       { name: 'Server mới — tạo toàn bộ cấu trúc', value: 'fresh' },
       { name: 'Tái cấu trúc an toàn — giữ chat và role thành viên', value: 'safe' },
-      { name: 'Đồng bộ cả permission (nâng cao)', value: 'sync' }
+      { name: 'Đồng bộ cả permission (nâng cao)', value: 'sync' },
+      { name: 'Tạo lại role — chuyển thành viên và xếp theo quyền', value: 'rebuild_roles' }
     )).setDefaultMemberPermissions(P.Administrator),
   new SlashCommandBuilder().setName('scan_server').setDescription('Xuất toàn bộ role, kênh và permission thành MD + JSON').setDefaultMemberPermissions(P.ManageGuild),
   new SlashCommandBuilder().setName('panel').setDescription('Đăng bảng xác minh hoặc ticket')

@@ -53,20 +53,28 @@ async function handleCommand(interaction) {
     if (!interaction.member.permissions.has(P.Administrator)) return reply(interaction, { embeds: [errorEmbed('Bạn cần quyền Administrator để đồng bộ cấu trúc server.')] });
     const mode = value(interaction, 'chế_độ');
     const fresh = mode === 'fresh';
-    const sync = fresh || mode === 'safe' || mode === 'sync';
+    const rebuildRoles = mode === 'rebuild_roles';
+    const sync = fresh || mode === 'safe' || mode === 'sync' || rebuildRoles;
     // Server mới cần áp dụng đầy đủ permission từ template.
     // Chỉ hai chế độ bảo toàn mới giữ nguyên permission hiện tại.
     const preserveExisting = mode === 'missing' || mode === 'safe';
     const result = await setupFromSnapshot(guild, {
       sync,
-      preserveExisting,
+      preserveExisting: rebuildRoles ? true : preserveExisting,
+      rebuildRoles,
       progress: message => interaction.editReply({ embeds: [baseEmbed('⚙️ ĐANG ĐỒNG BỘ', message)] })
     });
+    if (rebuildRoles && result.roleRebuild && !result.roleRebuild.completed) {
+      const rebuild = result.roleRebuild;
+      return interaction.editReply({ embeds: [errorEmbed(`Chưa hoàn tất tái tạo role. Role cũ được giữ nếu chưa thể chuyển an toàn. Đã tạo ${rebuild.createdCount} role mới; chuyển ${rebuild.assignmentsMoved || 0} lượt role cho ${rebuild.membersUpdated || 0} thành viên; sao chép ${rebuild.overwritesMoved || 0} quyền kênh; xóa ${rebuild.deletedCount || 0} role cũ.${result.warnings.length ? `\n\n${result.warnings.slice(0, 6).map(item => `• ${item}`).join('\n')}` : ''}`)] });
+    }
     const warningText = result.warnings.length
       ? `\n\n⚠️ **${result.warnings.length} lưu ý:**\n${result.warnings.slice(0, 10).map(item => `• ${item}`).join('\n')}${result.warnings.length > 10 ? `\n• Và ${result.warnings.length - 10} lưu ý khác.` : ''}`
       : '';
-    const action = fresh ? 'khởi tạo server mới với' : sync ? 'tái cấu trúc' : 'bổ sung';
-    const permissionText = fresh || mode === 'sync'
+    const action = rebuildRoles ? 'tạo lại role' : fresh ? 'khởi tạo server mới với' : sync ? 'tái cấu trúc' : 'bổ sung';
+    const permissionText = rebuildRoles
+      ? '\n✅ Role mới nhận quyền theo template; permission hiện có trong kênh được chuyển qua.'
+      : fresh || mode === 'sync'
       ? '\n✅ Đã áp dụng permission role và permission kênh từ template.'
       : '\n✅ Giữ nguyên permission hiện tại.';
     const cleanupText = result.removedDeprecatedChannels
@@ -74,10 +82,13 @@ async function handleCommand(interaction) {
       : '\n✅ Không xóa các kênh cũ từ bản scan.';
     const orderText = sync
       ? result.ordering.roleOrderMatched
-        ? `\n✅ Đã kiểm tra: **${result.ordering.orderedRoleCount} role** đúng thứ tự trong file scan.`
+        ? `\n✅ Đã kiểm tra: **${result.ordering.orderedRoleCount} role** đúng thứ tự${rebuildRoles ? ' theo quyền từ cao xuống thấp' : ' trong file scan'}.`
         : `\n⚠️ Chưa thể xếp đủ role (${result.ordering.lockedRoleCount} role bị khóa/cao hơn bot).`
       : '';
-    return interaction.editReply({ embeds: [successEmbed(`Đã ${action} **${result.roles} role** và **${result.channels} category/kênh** cho **${guild.name}**.${warningText}\n\n✅ Lịch sử của các kênh cũ từ bản scan được giữ nguyên.\n✅ Không xóa/tạo lại role cũ nên thành viên vẫn giữ nguyên role.${permissionText}${cleanupText}${orderText}\n✅ Role fandom mặc định là **Aikon**.`)] });
+    const rebuildText = result.roleRebuild
+      ? `\n🔁 Đã tạo **${result.roleRebuild.createdCount} role mới**, chuyển **${result.roleRebuild.assignmentsMoved} lượt role** cho **${result.roleRebuild.membersUpdated} thành viên**, chuyển **${result.roleRebuild.overwritesMoved} quyền kênh** và xóa **${result.roleRebuild.deletedCount || 0} role cũ**.`
+      : '';
+    return interaction.editReply({ embeds: [successEmbed(`Đã ${action} **${result.roles} role** và **${result.channels} category/kênh** cho **${guild.name}**.${warningText}\n\n✅ Lịch sử của các kênh cũ từ bản scan được giữ nguyên.${rebuildRoles ? rebuildText : '\n✅ Không xóa/tạo lại role cũ nên thành viên vẫn giữ nguyên role.'}${permissionText}${cleanupText}${orderText}\n✅ Role fandom mặc định là **Aikon**.`)] });
   }
 
   if (commandName === 'scan_server') {

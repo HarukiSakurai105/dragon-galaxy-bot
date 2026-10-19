@@ -22,7 +22,7 @@ async function writeAll(data) {
 }
 
 function emptyState() {
-  return { setupComplete: false, roles: {}, channels: {}, warnings: {}, tickets: 0 };
+  return { setupComplete: false, roles: {}, channels: {}, warnings: {}, tickets: 0, rolesRebuilt: false, pendingRoleRebuild: false, pendingOldRoleIds: [] };
 }
 
 export async function getGuildData(guildId) {

@@ -16,6 +16,7 @@ Bot Discord riêng cho **🐉🪐Động Rồng Galaxy🌸❄**, được tạo 
   - **Server mới — tạo toàn bộ cấu trúc**: đặt tên server, tạo đầy đủ role/category/phòng, áp dụng permission từ template và sắp xếp role từ thấp lên cao.
   - **Tái cấu trúc an toàn**: đổi tên và sắp xếp chính kênh/role cũ theo ID. Không xóa kênh cũ trong snapshot, không mất lịch sử chat, không gỡ role khỏi thành viên và không ghi đè permission hiện tại.
   - **Đồng bộ cả permission**: chế độ nâng cao; đồng bộ permission từ snapshot nhưng vẫn không xóa kênh hoặc role.
+  - **Tạo lại role — chuyển thành viên và xếp theo quyền**: thay 50 role thuộc template, chuyển thành viên và quyền riêng từng kênh sang role mới trước khi xóa role cũ; xếp quyền cao hơn lên trên. Giữ `@everyone`, role tích hợp và role ngoài template.
 - `/scan_server`: xuất báo cáo Markdown + JSON và link tải trực tiếp.
 - `npm run preview-changes`: xuất `CHANGE-PREVIEW.md` liệt kê tên cũ → tên mới trước khi chạy setup.
 - `/panel`: bảng xác minh thành viên hoặc ticket hỗ trợ.

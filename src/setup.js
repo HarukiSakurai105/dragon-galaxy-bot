@@ -14,12 +14,52 @@ function primaryColor(hex) {
   return Number.parseInt(String(hex || '#000000').replace('#', ''), 16) || 0;
 }
 
+const permissionPriority = {
+  Administrator: 1_000_000,
+  ManageGuild: 100_000,
+  ManageRoles: 80_000,
+  ManageChannels: 70_000,
+  ManageWebhooks: 60_000,
+  BanMembers: 50_000,
+  KickMembers: 40_000,
+  ModerateMembers: 30_000,
+  ManageMessages: 20_000,
+  ManageThreads: 15_000,
+  ManageEvents: 12_000,
+  ManageNicknames: 10_000,
+  MoveMembers: 8_000,
+  MuteMembers: 7_000,
+  DeafenMembers: 6_000,
+  ViewAuditLog: 5_000
+};
+
+function permissionRank(spec) {
+  return spec.permissions.reduce((score, name) => score + (permissionPriority[name] || 100), 0);
+}
+
+function roleSpecsByPermission() {
+  return [...roleSpecs].sort((a, b) => permissionRank(a) - permissionRank(b) || a.position - b.position);
+}
+
 function findRole(guild, name, originalId, roleMap) {
   const mappedId = roleMap[originalId];
   return (guild.id === snapshot.server.id ? guild.roles.cache.get(originalId) : null)
     || guild.roles.cache.get(mappedId)
     || guild.roles.cache.find(role => !role.managed && role.name === name)
     || null;
+}
+
+async function removeUnusedCreatedRoles(created, reason, warnings) {
+  let remaining = 0;
+  for (const item of created) {
+    try {
+      await item.role.delete(reason);
+    } catch (error) {
+      remaining += 1;
+      warnings.push(`Không dọn được role mới ${item.role.name}: ${error.message}`);
+    }
+  }
+  return remaining;
 }
 
 function mapOverwrites(guild, overwrites, rolesByName, roleMap) {
@@ -40,8 +80,9 @@ function mapOverwrites(guild, overwrites, rolesByName, roleMap) {
   return result;
 }
 
-async function ensureRole(guild, spec, storedId, sync, preserveExisting, warnings) {
-  let role = (guild.id === snapshot.server.id ? guild.roles.cache.get(spec.id) : null)
+async function ensureRole(guild, spec, storedId, sync, preserveExisting, warnings, preferStoredId = false) {
+  let role = (preferStoredId ? guild.roles.cache.get(storedId) : null)
+    || (guild.id === snapshot.server.id ? guild.roles.cache.get(spec.id) : null)
     || guild.roles.cache.get(storedId)
     || guild.roles.cache.find(item => !item.managed && (item.name === spec.name || item.name === spec.originalName));
   const visualOptions = {
@@ -65,6 +106,130 @@ async function ensureRole(guild, spec, storedId, sync, preserveExisting, warning
     warnings.push(`Không thể cập nhật role ${role.name}: role cao hơn bot hoặc do Discord quản lý.`);
   }
   return role;
+}
+
+async function recreateTemplateRoles(guild, roleMap, members, warnings, progress, preferStoredId) {
+  const mapped = roleSpecs.map(spec => ({
+    spec,
+    role: preferStoredId && guild.roles.cache.has(roleMap[spec.id])
+      ? guild.roles.cache.get(roleMap[spec.id])
+      : findRole(guild, spec.name, spec.id, roleMap)
+  }));
+  const previousRoles = mapped.filter(item => item.role && !item.role.managed && item.role.id !== guild.roles.everyone.id);
+  const uniqueRoleIds = new Set(previousRoles.map(item => item.role.id));
+  if (uniqueRoleIds.size !== previousRoles.length) {
+    throw new Error('Có nhiều role template đang trỏ cùng một role hiện tại. Chưa tạo hoặc xóa role nào; hãy chạy /scan_server và đồng bộ ID role trước.');
+  }
+  const locked = previousRoles.filter(item => !item.role.editable);
+  if (locked.length) {
+    throw new Error(`Chưa tạo lại role nào. Kéo role bot lên cao hơn các role template này rồi chạy lại: ${locked.slice(0, 8).map(item => item.role.name).join(', ')}${locked.length > 8 ? ', ...' : ''}.`);
+  }
+  if (!guild.members.me?.permissions.has(PermissionFlagsBits.ManageRoles)) {
+    throw new Error('Bot cần quyền Manage Roles để tạo lại role.');
+  }
+
+  const created = [];
+  try {
+    await progress(`Đang tạo ${roleSpecs.length} role mới...`);
+    for (const spec of roleSpecs) {
+      const role = await guild.roles.create({
+        name: spec.name,
+        colors: { primaryColor: primaryColor(spec.color) },
+        hoist: Boolean(spec.hoist),
+        mentionable: Boolean(spec.mentionable),
+        permissions: new PermissionsBitField(permissionBits(spec.permissions)),
+        reason: 'Tái tạo role theo yêu cầu chủ server'
+      });
+      created.push({ spec, role });
+    }
+  } catch (error) {
+    await removeUnusedCreatedRoles(created, 'Dọn role mới chưa sử dụng do bước tạo role thất bại', warnings);
+    throw new Error(`Không tạo đủ role mới; role cũ vẫn được giữ. Lỗi: ${error.message}`);
+  }
+
+  const permissionOrder = roleSpecsByPermission();
+  const createdBySpec = new Map(created.map(item => [item.spec.id, item.role]));
+  await progress('Đang chuyển role mới cho thành viên...');
+  const oldToNew = new Map();
+  for (const { spec, role: oldRole } of previousRoles) {
+    const newRole = createdBySpec.get(spec.id);
+    if (newRole) oldToNew.set(oldRole.id, newRole);
+  }
+  const memberships = [];
+  for (const member of members.values()) {
+    const replacementIds = [...oldToNew]
+      .filter(([oldRoleId]) => member.roles.cache.has(oldRoleId))
+      .map(([, newRole]) => newRole.id);
+    if (!replacementIds.length) continue;
+    try {
+      await member.roles.add(replacementIds, 'Tái tạo role; giữ các role thành viên hiện có');
+      memberships.push(replacementIds.length);
+    } catch (error) {
+      warnings.push(`Dừng trước khi xóa role cũ: không chuyển role cho ${member.user.tag} (${error.message}).`);
+      const remainingCreated = await removeUnusedCreatedRoles(created, 'Hoàn tác role mới do chuyển thành viên thất bại', warnings);
+      return { completed: false, createdCount: remainingCreated, membersUpdated: memberships.length, assignmentsMoved: memberships.reduce((sum, count) => sum + count, 0), overwritesMoved: 0, deletedCount: 0, orderedRoleCount: 0, roleOrderMatched: false, lockedRoleCount: locked.length };
+    }
+  }
+
+  await progress('Đang chuyển quyền role trong các kênh...');
+  let overwritesMoved = 0;
+  try {
+    for (const channel of guild.channels.cache.values()) {
+      if (!channel.permissionOverwrites) continue;
+      for (const [oldRoleId, newRole] of oldToNew) {
+        const overwrite = channel.permissionOverwrites.cache.get(oldRoleId);
+        if (!overwrite) continue;
+        await channel.permissionOverwrites.edit(newRole.id, {
+          allow: overwrite.allow.bitfield,
+          deny: overwrite.deny.bitfield
+        }, 'Tái tạo role; sao chép quyền kênh sang role mới');
+        overwritesMoved += 1;
+      }
+    }
+  } catch (error) {
+    warnings.push(`Dừng trước khi xóa role cũ: có quyền kênh chưa sao chép hết (${error.message}). Role cũ vẫn còn.`);
+    const remainingCreated = await removeUnusedCreatedRoles(created, 'Hoàn tác role mới do sao chép quyền kênh thất bại', warnings);
+    return { completed: false, createdCount: remainingCreated, membersUpdated: memberships.length, assignmentsMoved: memberships.reduce((sum, count) => sum + count, 0), overwritesMoved, deletedCount: 0, orderedRoleCount: 0, roleOrderMatched: false, lockedRoleCount: locked.length };
+  }
+
+  const nextRoleMap = { ...roleMap };
+  for (const { spec, role } of created) nextRoleMap[spec.id] = role.id;
+  const oldRoleIds = previousRoles.map(item => item.role.id);
+  await updateGuildData(guild.id, current => ({ ...current, roles: nextRoleMap, pendingRoleRebuild: true, pendingOldRoleIds: oldRoleIds }));
+  Object.assign(roleMap, nextRoleMap);
+
+  await progress('Đang xóa role cũ đã được thay thế...');
+  let deleted = 0;
+  for (const { role } of previousRoles) {
+    try {
+      await role.delete('Role đã được thay thế; thành viên và quyền kênh đã chuyển sang role mới');
+      deleted += 1;
+    } catch (error) {
+      warnings.push(`Không xóa được role cũ ${role.name}; thành viên đã có role mới (${error.message}).`);
+    }
+  }
+  await guild.roles.fetch();
+  const remainingOldRoleIds = previousRoles
+    .map(item => item.role.id)
+    .filter(id => guild.roles.cache.has(id));
+  await updateGuildData(guild.id, current => ({
+    ...current,
+    roles: nextRoleMap,
+    pendingRoleRebuild: remainingOldRoleIds.length > 0,
+    pendingOldRoleIds: remainingOldRoleIds
+  }));
+  return {
+    completed: remainingOldRoleIds.length === 0,
+    createdCount: created.length,
+    membersUpdated: memberships.length,
+    assignmentsMoved: memberships.reduce((sum, count) => sum + count, 0),
+    overwritesMoved,
+    deletedCount: deleted,
+    orderedRoleCount: created.length,
+    roleOrderMatched: true,
+    lockedRoleCount: 0,
+    roleOrder: permissionOrder.map(spec => spec.name)
+  };
 }
 
 function supportedChannelType(type) {
@@ -122,8 +287,8 @@ async function ensureChannel(guild, spec, storedId, parentId, overwrites, sync, 
   return channel;
 }
 
-async function orderStructure(guild, roleMap, channelMap, warnings) {
-  const orderedRoles = roleSpecs
+async function orderStructure(guild, roleMap, channelMap, warnings, roleOrder = roleSpecs, byPermission = false, orderChannels = true) {
+  const orderedRoles = roleOrder
     .map(spec => ({ spec, role: guild.roles.cache.get(roleMap[spec.id]) }))
     .filter(item => item.role);
   const editableRoles = orderedRoles.filter(item => item.role.editable);
@@ -134,12 +299,11 @@ async function orderStructure(guild, roleMap, channelMap, warnings) {
   }
   let roleOrderMatched = false;
   try {
-    // Khôi phục đúng vị trí tuyệt đối đã ghi trong file scan. Không nén thành 1..N vì
-    // các role bot/integration bị Discord khóa đang nằm xen giữa các role cộng đồng.
     if (editableRoles.length) {
-      await guild.roles.setPositions(editableRoles.map(({ role, spec }) => ({
+      const firstPosition = Math.max(1, guild.members.me.roles.highest.position - editableRoles.length);
+      await guild.roles.setPositions(editableRoles.map(({ role, spec }, index) => ({
         role,
-        position: spec.position
+        position: byPermission ? firstPosition + index : spec.position
       })));
       await guild.roles.fetch();
 
@@ -151,14 +315,14 @@ async function orderStructure(guild, roleMap, channelMap, warnings) {
         .map(role => role.id);
       roleOrderMatched = expectedLowToHigh.every((id, index) => actualLowToHigh[index] === id);
       if (!roleOrderMatched) {
-        warnings.push('Discord chưa áp dụng đúng toàn bộ thứ tự role từ file scan. Hãy bảo đảm role bot nằm trên tất cả role cộng đồng rồi chạy lại /setup.');
+        warnings.push(`Discord chưa áp dụng đúng toàn bộ thứ tự role${byPermission ? ' theo quyền' : ' từ file scan'}. Hãy bảo đảm role bot nằm trên tất cả role cộng đồng rồi chạy lại /setup.`);
       }
     }
   } catch (error) {
     warnings.push(`Không xếp được role: ${error.message}. Hãy kéo role bot lên cao nhất rồi chạy lại /setup.`);
   }
 
-  try {
+  if (orderChannels) try {
     const categories = categorySpecs.map(spec => guild.channels.cache.get(channelMap[spec.id])).filter(Boolean);
     await guild.channels.setPositions(categories.map((channel, index) => ({ channel, position: index })));
     for (const categorySpec of categorySpecs) {
@@ -200,8 +364,15 @@ async function removeDeprecatedGeneratedChannels(guild, channelMap, warnings) {
   return removed;
 }
 
-export async function setupFromSnapshot(guild, { sync = false, preserveExisting = true, progress = async () => {} } = {}) {
-  await Promise.all([guild.roles.fetch(), guild.channels.fetch(), guild.members.fetch().catch(() => null)]);
+export async function setupFromSnapshot(guild, { sync = false, preserveExisting = true, rebuildRoles = false, progress = async () => {} } = {}) {
+  const [, , fetchedMembers] = await Promise.all([
+    guild.roles.fetch(),
+    guild.channels.fetch(),
+    guild.members.fetch().catch(error => {
+      if (rebuildRoles) throw new Error(`Không tải được danh sách thành viên nên chưa thay đổi role: ${error.message}`);
+      return null;
+    })
+  ]);
   const stored = await getGuildData(guild.id);
   const roleMap = { ...(stored.roles || {}) };
   const channelMap = { ...(stored.channels || {}) };
@@ -209,6 +380,100 @@ export async function setupFromSnapshot(guild, { sync = false, preserveExisting 
   const warnings = [];
   let removedDeprecatedChannels = 0;
   let ordering = { roleOrderMatched: false, orderedRoleCount: 0, lockedRoleCount: 0 };
+  let roleRebuild = null;
+
+  if (rebuildRoles) {
+    let resumedPendingRebuild = false;
+    await progress(`Chuẩn bị tạo lại ${roleSpecs.length} role...`);
+    for (const spec of roleSpecs) {
+      const mappedRole = stored.rolesRebuilt || stored.pendingRoleRebuild
+        ? guild.roles.cache.get(roleMap[spec.id])
+        : null;
+      const currentRole = mappedRole || findRole(guild, spec.name, spec.id, roleMap);
+      if (currentRole) roleMap[spec.id] = currentRole.id;
+    }
+    if (!fetchedMembers) throw new Error('Không tải đủ danh sách thành viên; chưa thay đổi role.');
+    if (stored.pendingRoleRebuild) {
+      resumedPendingRebuild = true;
+      await progress('Đang hoàn tất xóa các role cũ còn lại...');
+      let deletedCount = 0;
+      const remainingOldRoleIds = [];
+      for (const roleId of stored.pendingOldRoleIds || []) {
+        const oldRole = guild.roles.cache.get(roleId);
+        if (!oldRole) continue;
+        if (!oldRole.editable) {
+          remainingOldRoleIds.push(roleId);
+          warnings.push(`Role cũ ${oldRole.name} vẫn cao hơn role bot nên chưa xóa được.`);
+          continue;
+        }
+        try {
+          await oldRole.delete('Hoàn tất thay thế role; thành viên đã chuyển sang role mới');
+          deletedCount += 1;
+        } catch (error) {
+          remainingOldRoleIds.push(roleId);
+          warnings.push(`Chưa xóa được role cũ ${oldRole.name}: ${error.message}`);
+        }
+      }
+      await guild.roles.fetch();
+      roleRebuild = {
+        completed: remainingOldRoleIds.length === 0,
+        createdCount: 0,
+        membersUpdated: 0,
+        assignmentsMoved: 0,
+        overwritesMoved: 0,
+        deletedCount,
+        orderedRoleCount: roleSpecs.length,
+        roleOrderMatched: false,
+        lockedRoleCount: remainingOldRoleIds.length
+      };
+      await updateGuildData(guild.id, current => ({
+        ...current,
+        pendingRoleRebuild: remainingOldRoleIds.length > 0,
+        pendingOldRoleIds: remainingOldRoleIds
+      }));
+    } else {
+      roleRebuild = await recreateTemplateRoles(guild, roleMap, fetchedMembers, warnings, progress, Boolean(stored.rolesRebuilt));
+    }
+    if (!roleRebuild.completed) {
+      return {
+        state: await getGuildData(guild.id),
+        roles: Object.keys(roleMap).length,
+        channels: Object.keys(channelMap).length,
+        preservedHistory: true,
+        preservedRoleMemberships: true,
+        removedDeprecatedChannels: 0,
+        ordering: roleRebuild,
+        roleRebuild,
+        warnings
+      };
+    }
+
+    ordering = await orderStructure(guild, roleMap, channelMap, warnings, roleSpecsByPermission(), true, false);
+    roleRebuild.roleOrderMatched = ordering.roleOrderMatched;
+    roleRebuild.orderedRoleCount = ordering.orderedRoleCount;
+    if (resumedPendingRebuild && roleRebuild.createdCount === 0) roleRebuild.roleOrderMatched = ordering.roleOrderMatched;
+    const state = await updateGuildData(guild.id, current => ({
+      ...current,
+      setupComplete: true,
+      roles: roleMap,
+      lastSetupAt: new Date().toISOString(),
+      sourceSnapshot: snapshot.generatedAt,
+      pendingRoleRebuild: false,
+      pendingOldRoleIds: [],
+      rolesRebuilt: true
+    }));
+    return {
+      state,
+      roles: Object.keys(roleMap).length,
+      channels: Object.keys(channelMap).length,
+      preservedHistory: true,
+      preservedRoleMemberships: true,
+      removedDeprecatedChannels: 0,
+      ordering,
+      roleRebuild,
+      warnings
+    };
+  }
 
   if (sync) {
     await progress('Đang gỡ khu SẢNH CHÍNH dư thừa...');
@@ -223,7 +488,7 @@ export async function setupFromSnapshot(guild, { sync = false, preserveExisting 
   await progress(`Đang đồng bộ ${roleSpecs.length} role...`);
   for (const spec of roleSpecs) {
     try {
-      const role = await ensureRole(guild, spec, roleMap[spec.id], sync, preserveExisting, warnings);
+      const role = await ensureRole(guild, spec, roleMap[spec.id], sync, preserveExisting, warnings, Boolean(stored.rolesRebuilt || stored.pendingRoleRebuild));
       roleMap[spec.id] = role.id;
       rolesByName.set(spec.name, role);
     } catch (error) {
@@ -258,7 +523,15 @@ export async function setupFromSnapshot(guild, { sync = false, preserveExisting 
 
   if (sync) {
     await progress('Đang sắp xếp role và kênh...');
-    ordering = await orderStructure(guild, roleMap, channelMap, warnings);
+    const orderByPermission = Boolean(stored.rolesRebuilt);
+    ordering = await orderStructure(
+      guild,
+      roleMap,
+      channelMap,
+      warnings,
+      orderByPermission ? roleSpecsByPermission() : roleSpecs,
+      orderByPermission
+    );
   }
 
   const state = await updateGuildData(guild.id, current => ({
@@ -268,7 +541,9 @@ export async function setupFromSnapshot(guild, { sync = false, preserveExisting 
     channels: channelMap,
     lastSetupAt: new Date().toISOString(),
     sourceSnapshot: snapshot.generatedAt,
-    preserveExisting
+    preserveExisting,
+    pendingRoleRebuild: false,
+    rolesRebuilt: Boolean(stored.rolesRebuilt)
   }));
 
   return {
@@ -279,6 +554,7 @@ export async function setupFromSnapshot(guild, { sync = false, preserveExisting 
     preservedRoleMemberships: true,
     removedDeprecatedChannels,
     ordering,
+    roleRebuild,
     warnings
   };
 }
