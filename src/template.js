@@ -45,14 +45,22 @@ export function validateSnapshot() {
   if (!roleSpecs.length || !categorySpecs.length || !channelSpecs.length) throw new Error('Template không có đủ role/category/kênh.');
   const duplicateRoles = roleSpecs.filter((role, index) => roleSpecs.findIndex(item => item.name === role.name) !== index);
   if (duplicateRoles.length) throw new Error(`Template có role trùng tên: ${duplicateRoles.map(role => role.name).join(', ')}`);
+  const missingRoleTheme = roleSpecs.filter(role => !communityTheme.roleNames[role.id]);
+  if (missingRoleTheme.length) throw new Error(`Theme thiếu icon/tên thường cho ${missingRoleTheme.length} role.`);
+  const styledFont = /[\u{1D400}-\u{1D7FF}]/u;
+  const invalidRoleNames = roleSpecs.filter(role => !role.name.includes('・') || styledFont.test(role.name));
+  if (invalidRoleNames.length) throw new Error(`Role chưa dùng font thường hoặc thiếu icon: ${invalidRoleNames.map(role => role.name).join(', ')}`);
   const themedChannels = [...categorySpecs, ...channelSpecs];
   const missingTheme = themedChannels.filter(channel => !communityTheme.channelNames[channel.id]);
   if (missingTheme.length) throw new Error(`Theme Aikon thiếu ${missingTheme.length} kênh.`);
+  const invalidChannelNames = themedChannels.filter(channel => styledFont.test(channel.name));
+  if (invalidChannelNames.length) throw new Error(`Kênh vẫn còn font kiểu: ${invalidChannelNames.map(channel => channel.name).join(', ')}`);
   if (!roleSpecs.some(role => role.name === communityTheme.fandomRoleName)) throw new Error(`Không tìm thấy role fandom ${communityTheme.fandomRoleName}.`);
   return {
     server: communityTheme.serverName,
     fandom: communityTheme.fandomRoleName,
     roles: roleSpecs.length,
+    themedRoles: roleSpecs.length,
     categories: categorySpecs.length,
     channels: channelSpecs.length,
     themedChannels: themedChannels.length,

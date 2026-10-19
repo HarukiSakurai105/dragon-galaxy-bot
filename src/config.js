@@ -6,7 +6,7 @@ export const config = {
   timezone: process.env.TIMEZONE || 'Asia/Ho_Chi_Minh',
   brandName: process.env.BRAND_NAME || 'Động Rồng Galaxy',
   color: Number.parseInt(process.env.BRAND_COLOR || 'FF8FDB', 16),
-  memberRoleName: process.env.MEMBER_ROLE_NAME || 'Aikon',
+  memberRoleName: process.env.MEMBER_ROLE_NAME || '🌌・Aikon',
   staffRoleNames: (process.env.STAFF_ROLE_NAMES || '🌸・Galaxy Master|🔰・Moderator|🐉・Dragon Staff').split('|').map(value => value.trim()).filter(Boolean)
 };
 

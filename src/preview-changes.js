@@ -47,6 +47,7 @@ const lines = [
   '## Tổng kết',
   '',
   `- ${changedRoles.length} role đổi tên; ${unchangedRoles.length} role giữ nguyên tên.`,
+  `- ${snapshot.roles.filter(role => role.managed).length} role managed của bot/integration do Discord quản lý được giữ nguyên.`,
   `- ${categorySpecs.length} category đổi tên.`,
   `- ${channelSpecs.length} phòng chat/voice/forum đổi tên.`,
   `- Tổng cộng ${allChannels.length} category/phòng được nhận diện bằng ID cũ.`,

@@ -54,7 +54,7 @@ npm install
 npm start
 ```
 
-Sau khi bot online, chủ server chạy `/setup` → **Tái cấu trúc an toàn — giữ chat và role thành viên**. Bot sẽ giữ tên server đúng là **🐉🪐Động Rồng Galaxy🌸❄**, dùng **Aikon** làm tên fandom và đổi tên toàn bộ 75 category/kênh từ bản scan ngay trên ID cũ.
+Sau khi bot online, chủ server chạy `/setup` → **Tái cấu trúc an toàn — giữ chat và role thành viên**. Bot sẽ giữ tên server đúng là **🐉🪐Động Rồng Galaxy🌸❄**, dùng **🌌・Aikon** làm role fandom, đổi toàn bộ 50 role cộng đồng về font thường có icon và đổi tên toàn bộ 75 category/kênh từ bản scan ngay trên ID cũ.
 
 Bot mới mặc định dùng health port `3001`, nên có thể chạy cùng máy với bot UPD đang dùng port `3000`.
 

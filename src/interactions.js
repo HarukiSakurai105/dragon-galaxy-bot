@@ -10,6 +10,7 @@ import { config } from './config.js';
 import { baseEmbed, errorEmbed, successEmbed } from './embeds.js';
 import { createServerReport } from './report.js';
 import { setupFromSnapshot } from './setup.js';
+import { communityTheme } from './theme.js';
 
 function value(interaction, name) {
   return interaction.options.get(name)?.value;
@@ -144,7 +145,8 @@ async function handleCommand(interaction) {
 async function handleButton(interaction) {
   const { guild } = interaction;
   if (interaction.customId === 'verify_member') {
-    const role = guild.roles.cache.find(item => item.name === config.memberRoleName);
+    const role = guild.roles.cache.get(communityTheme.fandomRoleId)
+      || guild.roles.cache.find(item => item.name === config.memberRoleName || item.name === 'Aikon');
     if (!role) return reply(interaction, { embeds: [errorEmbed(`Không tìm thấy role **${config.memberRoleName}**.`)] });
     if (!role.editable) return reply(interaction, { embeds: [errorEmbed('Role thành viên đang nằm cao hơn role bot.')] });
     await interaction.member.roles.add(role, 'Xác minh cộng đồng Dragon Galaxy');
