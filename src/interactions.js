@@ -52,7 +52,8 @@ async function handleCommand(interaction) {
   if (commandName === 'setup') {
     if (!interaction.member.permissions.has(P.Administrator)) return reply(interaction, { embeds: [errorEmbed('Bạn cần quyền Administrator để đồng bộ cấu trúc server.')] });
     const mode = value(interaction, 'chế_độ');
-    const sync = mode === 'safe' || mode === 'sync';
+    const fresh = mode === 'fresh';
+    const sync = fresh || mode === 'safe' || mode === 'sync';
     const preserveExisting = mode !== 'sync';
     const result = await setupFromSnapshot(guild, {
       sync,
@@ -62,7 +63,8 @@ async function handleCommand(interaction) {
     const warningText = result.warnings.length
       ? `\n\n⚠️ **${result.warnings.length} lưu ý:**\n${result.warnings.slice(0, 10).map(item => `• ${item}`).join('\n')}${result.warnings.length > 10 ? `\n• Và ${result.warnings.length - 10} lưu ý khác.` : ''}`
       : '';
-    return interaction.editReply({ embeds: [successEmbed(`Đã ${sync ? 'tái cấu trúc' : 'bổ sung'} **${result.roles} role** và **${result.channels} category/kênh** cho **${guild.name}**.${warningText}\n\n✅ Không xóa kênh nên lịch sử chat được giữ nguyên.\n✅ Không xóa/tạo lại role cũ nên thành viên vẫn giữ nguyên role.\n✅ Role fandom mặc định là **Aikon**.`)] });
+    const action = fresh ? 'khởi tạo server mới với' : sync ? 'tái cấu trúc' : 'bổ sung';
+    return interaction.editReply({ embeds: [successEmbed(`Đã ${action} **${result.roles} role** và **${result.channels} category/kênh** cho **${guild.name}**.${warningText}\n\n✅ Không xóa kênh nên lịch sử chat được giữ nguyên.\n✅ Không xóa/tạo lại role cũ nên thành viên vẫn giữ nguyên role.\n✅ Role fandom mặc định là **Aikon**.`)] });
   }
 
   if (commandName === 'scan_server') {
@@ -138,7 +140,7 @@ async function handleCommand(interaction) {
   }
 
   if (commandName === 'help') {
-    return reply(interaction, { embeds: [baseEmbed('🤖 TRỢ GIÚP DRAGON GALAXY BOT', '**Cộng đồng**\n`/server` `/help`\n\n**Quản trị**\n`/announce` `/role add|remove` `/clear` `/timeout` `/untimeout` `/kick` `/ban`\n`/panel` — đăng xác minh hoặc ticket\n`/scan_server` — xuất cấu trúc server\n\n**Chủ server**\n`/setup` — bổ sung hoặc đồng bộ cấu trúc từ snapshot')] });
+    return reply(interaction, { embeds: [baseEmbed('🤖 TRỢ GIÚP DRAGON GALAXY BOT', '**Cộng đồng**\n`/server` `/help`\n\n**Quản trị**\n`/announce` `/role add|remove` `/clear` `/timeout` `/untimeout` `/kick` `/ban`\n`/panel` — đăng xác minh hoặc ticket\n`/scan_server` — xuất cấu trúc server\n\n**Chủ server**\n`/setup` — tạo server mới, bổ sung hoặc tái cấu trúc an toàn')] });
   }
 }
 

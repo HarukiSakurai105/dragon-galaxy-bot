@@ -1,6 +1,6 @@
 {
   "name": "dragon-galaxy-community-bot",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "private": true,
   "description": "Bot Discord riêng cho cộng đồng Động Rồng Galaxy",
   "type": "module",

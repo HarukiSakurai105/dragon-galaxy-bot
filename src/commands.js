@@ -4,6 +4,7 @@ export const commandData = [
   new SlashCommandBuilder().setName('setup').setDescription('Đồng bộ server theo file scan Dragon Galaxy')
     .addStringOption(option => option.setName('chế_độ').setDescription('Mức áp dụng cấu trúc').setRequired(true).addChoices(
       { name: 'Chỉ tạo phần còn thiếu', value: 'missing' },
+      { name: 'Server mới — tạo toàn bộ cấu trúc', value: 'fresh' },
       { name: 'Tái cấu trúc an toàn — giữ chat và role thành viên', value: 'safe' },
       { name: 'Đồng bộ cả permission (nâng cao)', value: 'sync' }
     )).setDefaultMemberPermissions(P.Administrator),
