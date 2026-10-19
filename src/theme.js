@@ -1,5 +1,5 @@
 export const communityTheme = {
-  serverName: '🐉🪐 Động Rồng Galaxy | Aikon 🌸❄',
+  serverName: '🐉🪐Động Rồng Galaxy🌸❄',
   fandomRoleName: 'Aikon',
   roleNames: {
     '1178935450291941427': '🐣・Aikon Mới',
