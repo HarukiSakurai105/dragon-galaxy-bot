@@ -5,6 +5,10 @@ import { communityTheme } from './theme.js';
 const changedRoles = roleSpecs.filter(role => role.originalName !== role.name);
 const unchangedRoles = roleSpecs.filter(role => role.originalName === role.name);
 const allChannels = [...categorySpecs, ...channelSpecs];
+const scannedCategories = categorySpecs.filter(channel => !channel.isAdditional);
+const scannedChannels = channelSpecs.filter(channel => !channel.isAdditional);
+const additionalCategories = categorySpecs.filter(channel => channel.isAdditional);
+const additionalChannels = channelSpecs.filter(channel => channel.isAdditional);
 
 function mappingLine(item) {
   return `- \`${item.id}\` — **${item.originalName}** → **${item.name}**`;
@@ -36,21 +40,27 @@ const lines = [
   '',
   ...unchangedRoles.map(role => `- \`${role.id}\` — **${role.name}**${role.name === communityTheme.fandomRoleName ? ' ← role fandom mặc định' : ''}`),
   '',
-  `## Category được đổi tên (${categorySpecs.length})`,
+  `## Category được đổi tên (${scannedCategories.length})`,
   '',
-  ...categorySpecs.map(mappingLine),
+  ...scannedCategories.map(mappingLine),
   '',
-  `## Phòng chat/voice/forum được đổi tên (${channelSpecs.length})`,
+  `## Phòng chat/voice/forum được đổi tên (${scannedChannels.length})`,
   '',
-  ...channelSpecs.map(mappingLine),
+  ...scannedChannels.map(mappingLine),
+  '',
+  `## Khu vực trang trí được bổ sung (${additionalCategories.length + additionalChannels.length})`,
+  '',
+  ...additionalCategories.map(category => `- Category mới: **${category.name}**`),
+  ...additionalChannels.map(channel => `- Phòng mới: **${channel.name}**`),
   '',
   '## Tổng kết',
   '',
   `- ${changedRoles.length} role đổi tên; ${unchangedRoles.length} role giữ nguyên tên.`,
   `- ${snapshot.roles.filter(role => role.managed).length} role managed của bot/integration do Discord quản lý được giữ nguyên.`,
-  `- ${categorySpecs.length} category đổi tên.`,
-  `- ${channelSpecs.length} phòng chat/voice/forum đổi tên.`,
-  `- Tổng cộng ${allChannels.length} category/phòng được nhận diện bằng ID cũ.`,
+  `- ${scannedCategories.length} category đổi tên.`,
+  `- ${scannedChannels.length} phòng chat/voice/forum đổi tên.`,
+  `- ${additionalCategories.length} category và ${additionalChannels.length} phòng trang trí được tạo thêm.`,
+  `- ${scannedCategories.length + scannedChannels.length} category/phòng cũ được nhận diện bằng ID cũ; tổng cấu trúc sau setup là ${allChannels.length} category/phòng.`,
   '- 0 kênh bị xóa; 0 role bị xóa; 0 thành viên bị gỡ role.'
 ];
 

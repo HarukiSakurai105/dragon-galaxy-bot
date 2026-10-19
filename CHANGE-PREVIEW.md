@@ -152,11 +152,25 @@ Tạo từ snapshot: 2026-10-15T04:27:04.446Z
 - `1328573217484439572` — **📖𝐫𝐨𝐨𝐦-𝐠𝐮𝐢𝐝𝐞** → **📖・hướng-dẫn-phòng**
 - `1284689876138332252` — **🌺𝐚𝐢𝐤𝐨-𝐡𝐢𝐦𝐞𝐠𝐢𝐦𝐢-𝐜𝐡𝐚𝐧𝐧𝐞𝐥** → **🌺・aiko-himegimi**
 
+## Khu vực trang trí được bổ sung (10)
+
+- Category mới: **╔★・SẢNH CHÍNH・★╗**
+- Phòng mới: **╭・💬・trò-chuyện-chính**
+- Phòng mới: **├・🎮・chat-game**
+- Phòng mới: **├・⛏️・chat-minecraft**
+- Phòng mới: **├・📸・khoảnh-khắc**
+- Phòng mới: **├・📣・rủ-rê**
+- Phòng mới: **├・⚖️・tòa-án**
+- Phòng mới: **├・👋・giới-thiệu-bản-thân**
+- Phòng mới: **├・🎵・nhạc-nền**
+- Phòng mới: **╰・⚜️・văn-phòng-aiko**
+
 ## Tổng kết
 
 - 50 role đổi tên; 0 role giữ nguyên tên.
 - 29 role managed của bot/integration do Discord quản lý được giữ nguyên.
 - 14 category đổi tên.
 - 61 phòng chat/voice/forum đổi tên.
-- Tổng cộng 75 category/phòng được nhận diện bằng ID cũ.
+- 1 category và 9 phòng trang trí được tạo thêm.
+- 75 category/phòng cũ được nhận diện bằng ID cũ; tổng cấu trúc sau setup là 85 category/phòng.
 - 0 kênh bị xóa; 0 role bị xóa; 0 thành viên bị gỡ role.

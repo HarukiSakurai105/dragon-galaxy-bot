@@ -20,7 +20,7 @@ export const roleSpecs = snapshot.roles
   .map(role => ({ ...role, originalName: role.name, name: communityTheme.roleNames[role.id] || role.name }))
   .sort((a, b) => a.position - b.position);
 
-export const categorySpecs = snapshot.channels
+const scannedCategorySpecs = snapshot.channels
   .filter(channel => channel.type === 'Category')
   .map(channel => ({
     ...channel,
@@ -30,7 +30,7 @@ export const categorySpecs = snapshot.channels
   }))
   .sort((a, b) => a.position - b.position);
 
-export const channelSpecs = snapshot.channels
+const scannedChannelSpecs = snapshot.channels
   .filter(channel => channel.type !== 'Category' && !channel.type.includes('Thread'))
   .map(channel => ({
     ...channel,
@@ -38,6 +38,33 @@ export const channelSpecs = snapshot.channels
     name: communityTheme.channelNames[channel.id] || channel.name,
     permissionOverwrites: themedOverwrites(channel.permissionOverwrites)
   }))
+  .sort((a, b) => a.position - b.position);
+
+const additionalCategorySpecs = (communityTheme.additionalCategories || []).map(category => ({
+  ...category,
+  originalName: null,
+  type: 'Category',
+  typeCode: 4,
+  parentId: null,
+  permissionOverwrites: [],
+  isAdditional: true
+}));
+
+const additionalChannelSpecs = (communityTheme.additionalChannels || []).map(channel => ({
+  ...channel,
+  originalName: null,
+  type: 'Text',
+  typeCode: 0,
+  permissionOverwrites: [],
+  nsfw: false,
+  slowmodeSeconds: 0,
+  isAdditional: true
+}));
+
+export const categorySpecs = [...scannedCategorySpecs, ...additionalCategorySpecs]
+  .sort((a, b) => a.position - b.position);
+
+export const channelSpecs = [...scannedChannelSpecs, ...additionalChannelSpecs]
   .sort((a, b) => a.position - b.position);
 
 export function validateSnapshot() {
@@ -51,7 +78,7 @@ export function validateSnapshot() {
   const invalidRoleNames = roleSpecs.filter(role => !role.name.includes('・') || styledFont.test(role.name));
   if (invalidRoleNames.length) throw new Error(`Role chưa dùng font thường hoặc thiếu icon: ${invalidRoleNames.map(role => role.name).join(', ')}`);
   const themedChannels = [...categorySpecs, ...channelSpecs];
-  const missingTheme = themedChannels.filter(channel => !communityTheme.channelNames[channel.id]);
+  const missingTheme = themedChannels.filter(channel => !channel.isAdditional && !communityTheme.channelNames[channel.id]);
   if (missingTheme.length) throw new Error(`Theme Aikon thiếu ${missingTheme.length} kênh.`);
   const invalidChannelNames = themedChannels.filter(channel => styledFont.test(channel.name));
   if (invalidChannelNames.length) throw new Error(`Kênh vẫn còn font kiểu: ${invalidChannelNames.map(channel => channel.name).join(', ')}`);
@@ -64,6 +91,7 @@ export function validateSnapshot() {
     categories: categorySpecs.length,
     channels: channelSpecs.length,
     themedChannels: themedChannels.length,
+    additionalChannels: additionalCategorySpecs.length + additionalChannelSpecs.length,
     managedRolesSkipped: snapshot.roles.filter(role => role.managed).length
   };
 }
