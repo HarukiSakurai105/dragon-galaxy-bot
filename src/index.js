@@ -8,7 +8,7 @@ import { validateSnapshot } from './template.js';
 validateConfig();
 const templateInfo = validateSnapshot();
 
-const health = { startedAt: new Date().toISOString(), discordReady: false, botTag: null, guildCount: 0, template: templateInfo };
+const health = { startedAt: new Date().toISOString(), discordReady: false, botTag: null, applicationId: null, guildCount: 0, template: templateInfo };
 const port = Number(process.env.PORT || 3001);
 const healthServer = http.createServer((request, response) => {
   if (request.url !== '/' && request.url !== '/health') {
@@ -26,7 +26,11 @@ const client = new Client({
 const rest = new REST({ version: '10' }).setToken(config.token);
 
 async function registerGuild(guild) {
-  await rest.put(Routes.applicationGuildCommands(config.clientId, guild.id), { body: commandData });
+  // ID của bot đã đăng nhập chính là Application ID đáng tin cậy.
+  // Không dùng nhầm Guild ID được nhập thủ công trong CLIENT_ID.
+  const applicationId = client.user?.id;
+  if (!applicationId) throw new Error('Bot chưa đăng nhập nên chưa xác định được Application ID.');
+  await rest.put(Routes.applicationGuildCommands(applicationId, guild.id), { body: commandData });
   console.log(`✅ ${guild.name}: đã đăng ký ${commandData.length} slash command`);
 }
 
@@ -34,7 +38,11 @@ client.once(Events.ClientReady, async readyClient => {
   console.log(`✅ Bot online: ${readyClient.user.tag}`);
   health.discordReady = true;
   health.botTag = readyClient.user.tag;
+  health.applicationId = readyClient.user.id;
   health.guildCount = readyClient.guilds.cache.size;
+  if (config.clientId && config.clientId !== readyClient.user.id) {
+    console.warn(`⚠️ CLIENT_ID=${config.clientId} không khớp bot ${readyClient.user.id}; bot sẽ tự dùng ID đúng.`);
+  }
   readyClient.user.setPresence({ activities: [{ name: `${config.brandName} • /help`, type: ActivityType.Watching }], status: 'online' });
   for (const guild of readyClient.guilds.cache.values()) await registerGuild(guild).catch(error => console.error(`Không đăng ký được lệnh cho ${guild.name}:`, error));
 });

@@ -35,7 +35,8 @@ Sao chép `.env.example` thành `.env`, rồi điền:
 
 ```env
 DISCORD_TOKEN=token_bot
-CLIENT_ID=application_id
+# Không bắt buộc; bot tự nhận Application ID từ token đăng nhập
+CLIENT_ID=
 TIMEZONE=Asia/Ho_Chi_Minh
 BRAND_NAME=Động Rồng Galaxy
 BRAND_COLOR=FF8FDB
@@ -43,6 +44,8 @@ PORT=3001
 ```
 
 Trong Discord Developer Portal, bật **Server Members Intent**. Link mời bot phải có `bot` và `applications.commands`; lần setup đầu nên cấp `Administrator`. Kéo role bot lên trên mọi role mà bot cần tạo, sửa hoặc cấp.
+
+Bot tự lấy Application ID từ tài khoản bot đã đăng nhập. Không điền ID server vào `CLIENT_ID`; biến này có thể để trống.
 
 ## Chạy
 

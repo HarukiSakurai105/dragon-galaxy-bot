@@ -13,7 +13,6 @@ export const config = {
 export function validateConfig() {
   const missing = [];
   if (!config.token) missing.push('DISCORD_TOKEN');
-  if (!config.clientId) missing.push('CLIENT_ID');
   if (missing.length) throw new Error(`Thiếu biến môi trường: ${missing.join(', ')}`);
 }
 

@@ -18,7 +18,7 @@ if errorlevel 1 (
 
 if not exist ".env" (
   copy /y ".env.example" ".env" >nul
-  echo Da tao .env. Hay dien DISCORD_TOKEN va CLIENT_ID.
+  echo Da tao .env. Chi can dien DISCORD_TOKEN; CLIENT_ID co the de trong.
   start "" notepad ".env"
   pause
   exit /b 1
