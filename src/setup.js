@@ -16,8 +16,8 @@ function primaryColor(hex) {
 
 function findRole(guild, name, originalId, roleMap) {
   const mappedId = roleMap[originalId];
-  return guild.roles.cache.get(mappedId)
-    || (guild.id === snapshot.server.id ? guild.roles.cache.get(originalId) : null)
+  return (guild.id === snapshot.server.id ? guild.roles.cache.get(originalId) : null)
+    || guild.roles.cache.get(mappedId)
     || guild.roles.cache.find(role => !role.managed && role.name === name)
     || null;
 }
@@ -41,8 +41,8 @@ function mapOverwrites(guild, overwrites, rolesByName, roleMap) {
 }
 
 async function ensureRole(guild, spec, storedId, sync, preserveExisting, warnings) {
-  let role = guild.roles.cache.get(storedId)
-    || (guild.id === snapshot.server.id ? guild.roles.cache.get(spec.id) : null)
+  let role = (guild.id === snapshot.server.id ? guild.roles.cache.get(spec.id) : null)
+    || guild.roles.cache.get(storedId)
     || guild.roles.cache.find(item => !item.managed && (item.name === spec.name || item.name === spec.originalName));
   const visualOptions = {
     name: spec.name,
@@ -95,8 +95,8 @@ function channelEditOptions(spec, parentId) {
 
 async function ensureChannel(guild, spec, storedId, parentId, overwrites, sync, preserveExisting, warnings) {
   const expectedType = supportedChannelType(spec.typeCode);
-  let channel = guild.channels.cache.get(storedId)
-    || (guild.id === snapshot.server.id ? guild.channels.cache.get(spec.id) : null)
+  let channel = (guild.id === snapshot.server.id ? guild.channels.cache.get(spec.id) : null)
+    || guild.channels.cache.get(storedId)
     || guild.channels.cache.find(item => (item.name === spec.name || item.name === spec.originalName) && item.type === expectedType && (spec.type === 'Category' || item.parentId === parentId));
 
   if (!channel) {
@@ -123,17 +123,36 @@ async function ensureChannel(guild, spec, storedId, parentId, overwrites, sync, 
 }
 
 async function orderStructure(guild, roleMap, channelMap, warnings) {
-  const orderedRoles = roleSpecs.map(spec => guild.roles.cache.get(roleMap[spec.id])).filter(Boolean);
-  const editableRoles = orderedRoles.filter(role => role.editable);
-  const lockedRoles = orderedRoles.filter(role => !role.editable);
+  const orderedRoles = roleSpecs
+    .map(spec => ({ spec, role: guild.roles.cache.get(roleMap[spec.id]) }))
+    .filter(item => item.role);
+  const editableRoles = orderedRoles.filter(item => item.role.editable);
+  const lockedRoles = orderedRoles.filter(item => !item.role.editable);
   if (lockedRoles.length) {
-    warnings.push(`${lockedRoles.length} role không thể sắp xếp vì đang cao hơn role bot.`);
+    const names = lockedRoles.slice(-8).reverse().map(item => item.role.name).join(', ');
+    warnings.push(`${lockedRoles.length} role không thể sắp xếp vì đang cao hơn role bot: ${names}${lockedRoles.length > 8 ? ', ...' : ''}.`);
   }
+  let roleOrderMatched = false;
   try {
-    // roleSpecs đi từ cấp thấp đến cấp cao; position Discord càng lớn càng cao.
-    // Chỉ gửi role editable để một role nằm trên bot không làm hỏng toàn bộ lượt sắp xếp.
+    // Khôi phục đúng vị trí tuyệt đối đã ghi trong file scan. Không nén thành 1..N vì
+    // các role bot/integration bị Discord khóa đang nằm xen giữa các role cộng đồng.
     if (editableRoles.length) {
-      await guild.roles.setPositions(editableRoles.map((role, index) => ({ role, position: index + 1 })));
+      await guild.roles.setPositions(editableRoles.map(({ role, spec }) => ({
+        role,
+        position: spec.position
+      })));
+      await guild.roles.fetch();
+
+      const expectedLowToHigh = orderedRoles.map(item => item.role.id);
+      const actualLowToHigh = orderedRoles
+        .map(item => guild.roles.cache.get(item.role.id))
+        .filter(Boolean)
+        .sort((a, b) => a.position - b.position)
+        .map(role => role.id);
+      roleOrderMatched = expectedLowToHigh.every((id, index) => actualLowToHigh[index] === id);
+      if (!roleOrderMatched) {
+        warnings.push('Discord chưa áp dụng đúng toàn bộ thứ tự role từ file scan. Hãy bảo đảm role bot nằm trên tất cả role cộng đồng rồi chạy lại /setup.');
+      }
     }
   } catch (error) {
     warnings.push(`Không xếp được role: ${error.message}. Hãy kéo role bot lên cao nhất rồi chạy lại /setup.`);
@@ -152,6 +171,12 @@ async function orderStructure(guild, roleMap, channelMap, warnings) {
   } catch (error) {
     warnings.push(`Không xếp được toàn bộ kênh: ${error.message}.`);
   }
+
+  return {
+    roleOrderMatched,
+    orderedRoleCount: editableRoles.length,
+    lockedRoleCount: lockedRoles.length
+  };
 }
 
 async function removeDeprecatedGeneratedChannels(guild, channelMap, warnings) {
@@ -183,6 +208,7 @@ export async function setupFromSnapshot(guild, { sync = false, preserveExisting 
   const rolesByName = new Map();
   const warnings = [];
   let removedDeprecatedChannels = 0;
+  let ordering = { roleOrderMatched: false, orderedRoleCount: 0, lockedRoleCount: 0 };
 
   if (sync) {
     await progress('Đang gỡ khu SẢNH CHÍNH dư thừa...');
@@ -232,7 +258,7 @@ export async function setupFromSnapshot(guild, { sync = false, preserveExisting 
 
   if (sync) {
     await progress('Đang sắp xếp role và kênh...');
-    await orderStructure(guild, roleMap, channelMap, warnings);
+    ordering = await orderStructure(guild, roleMap, channelMap, warnings);
   }
 
   const state = await updateGuildData(guild.id, current => ({
@@ -252,6 +278,7 @@ export async function setupFromSnapshot(guild, { sync = false, preserveExisting 
     preservedHistory: true,
     preservedRoleMemberships: true,
     removedDeprecatedChannels,
+    ordering,
     warnings
   };
 }

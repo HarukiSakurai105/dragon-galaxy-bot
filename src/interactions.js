@@ -72,7 +72,12 @@ async function handleCommand(interaction) {
     const cleanupText = result.removedDeprecatedChannels
       ? `\n🧹 Đã xóa **${result.removedDeprecatedChannels}** category/phòng thuộc khu SẢNH CHÍNH dư thừa.`
       : '\n✅ Không xóa các kênh cũ từ bản scan.';
-    return interaction.editReply({ embeds: [successEmbed(`Đã ${action} **${result.roles} role** và **${result.channels} category/kênh** cho **${guild.name}**.${warningText}\n\n✅ Lịch sử của các kênh cũ từ bản scan được giữ nguyên.\n✅ Không xóa/tạo lại role cũ nên thành viên vẫn giữ nguyên role.${permissionText}${cleanupText}\n✅ Role fandom mặc định là **Aikon**.`)] });
+    const orderText = sync
+      ? result.ordering.roleOrderMatched
+        ? `\n✅ Đã kiểm tra: **${result.ordering.orderedRoleCount} role** đúng thứ tự trong file scan.`
+        : `\n⚠️ Chưa thể xếp đủ role (${result.ordering.lockedRoleCount} role bị khóa/cao hơn bot).`
+      : '';
+    return interaction.editReply({ embeds: [successEmbed(`Đã ${action} **${result.roles} role** và **${result.channels} category/kênh** cho **${guild.name}**.${warningText}\n\n✅ Lịch sử của các kênh cũ từ bản scan được giữ nguyên.\n✅ Không xóa/tạo lại role cũ nên thành viên vẫn giữ nguyên role.${permissionText}${cleanupText}${orderText}\n✅ Role fandom mặc định là **Aikon**.`)] });
   }
 
   if (commandName === 'scan_server') {
