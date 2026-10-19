@@ -13,7 +13,8 @@ Bot Discord riêng cho **🐉🪐Động Rồng Galaxy🌸❄**, được tạo 
 
 - `/setup`:
   - **Chỉ tạo phần còn thiếu**: không sửa/xóa cấu trúc hiện có.
-  - **Đồng bộ snapshot**: cập nhật role, permission, kênh và thứ tự; không xóa role/kênh ngoài snapshot.
+  - **Tái cấu trúc an toàn**: đổi tên và sắp xếp chính kênh/role cũ theo ID. Không xóa kênh, không mất lịch sử chat, không gỡ role khỏi thành viên và không ghi đè permission hiện tại.
+  - **Đồng bộ cả permission**: chế độ nâng cao; đồng bộ permission từ snapshot nhưng vẫn không xóa kênh hoặc role.
 - `/scan_server`: xuất báo cáo Markdown + JSON và link tải trực tiếp.
 - `/panel`: bảng xác minh thành viên hoặc ticket hỗ trợ.
 - Ticket riêng tư, Staff xử lý, đóng xong tự xóa sau 5 phút.
@@ -52,7 +53,7 @@ npm install
 npm start
 ```
 
-Sau khi bot online, chủ server chạy `/setup` → **Chỉ tạo phần còn thiếu** trước. Chỉ dùng chế độ đồng bộ khi đã kiểm tra backup và role bot nằm cao nhất.
+Sau khi bot online, chủ server chạy `/setup` → **Tái cấu trúc an toàn — giữ chat và role thành viên**. Bot sẽ đổi tên server thành **🐉🪐 Động Rồng Galaxy | Aikon 🌸❄**, dùng **Aikon** làm tên fandom và đổi tên toàn bộ 75 category/kênh từ bản scan ngay trên ID cũ.
 
 Bot mới mặc định dùng health port `3001`, nên có thể chạy cùng máy với bot UPD đang dùng port `3000`.
 
@@ -60,6 +61,8 @@ Bot mới mặc định dùng health port `3001`, nên có thể chạy cùng m�
 
 - Bot không có lệnh xóa toàn bộ server.
 - Role/kênh ngoài snapshot không bị xóa.
+- Kênh trong snapshot được đổi tên/di chuyển tại chỗ, vì vậy tin nhắn và lịch sử chat vẫn còn nguyên.
+- Role trong snapshot được sửa tại chỗ, không xóa/tạo lại nên membership của thành viên vẫn còn nguyên.
 - Role managed của bot khác không được tạo lại.
 - Snapshot chứa ID và permission riêng tư; chỉ chia sẻ repository với người tin tưởng.
 - Một số role trong snapshot có quyền `Administrator`; hãy kiểm tra kỹ trước khi đồng bộ sang server khác.

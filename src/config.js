@@ -6,8 +6,8 @@ export const config = {
   timezone: process.env.TIMEZONE || 'Asia/Ho_Chi_Minh',
   brandName: process.env.BRAND_NAME || 'Động Rồng Galaxy',
   color: Number.parseInt(process.env.BRAND_COLOR || 'FF8FDB', 16),
-  memberRoleName: process.env.MEMBER_ROLE_NAME || '🐣 ✿ 𝓓𝓻𝓪𝓰𝓸𝓷 𝓑𝓪𝓫𝔂 ✿',
-  staffRoleNames: (process.env.STAFF_ROLE_NAMES || '🌸 𝓢𝓪𝓴𝓾𝓻𝓪 𝓜𝓪𝓼𝓽𝓮𝓻|🔰 ✿ 𝓜𝓸𝓭𝓮𝓻𝓪𝓽𝓸𝓻 ✿|🐉 ✿ 𝓓𝓻𝓪𝓰𝓸𝓷 𝓜𝓪𝓲𝓭 ✿').split('|').map(value => value.trim()).filter(Boolean)
+  memberRoleName: process.env.MEMBER_ROLE_NAME || 'Aikon',
+  staffRoleNames: (process.env.STAFF_ROLE_NAMES || '🌸・Galaxy Master|🔰・Moderator|🐉・Dragon Staff').split('|').map(value => value.trim()).filter(Boolean)
 };
 
 export function validateConfig() {

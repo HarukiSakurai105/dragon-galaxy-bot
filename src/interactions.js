@@ -40,7 +40,8 @@ function safeName(valueToClean) {
 }
 
 async function logAction(guild, title, description, color = 0x5865f2) {
-  const channel = guild.channels.cache.find(item => item.isTextBased() && item.name.includes('𝐛𝐨𝐭-𝐥𝐨𝐠'));
+  const channel = guild.channels.cache.get('1151202729763553350')
+    || guild.channels.cache.find(item => item.isTextBased() && (item.name.includes('bot-log') || item.name.includes('𝐛𝐨𝐭-𝐥𝐨𝐠')));
   await channel?.send({ embeds: [baseEmbed(title, description).setColor(color)] }).catch(() => null);
 }
 
@@ -49,15 +50,18 @@ async function handleCommand(interaction) {
 
   if (commandName === 'setup') {
     if (!interaction.member.permissions.has(P.Administrator)) return reply(interaction, { embeds: [errorEmbed('Bạn cần quyền Administrator để đồng bộ cấu trúc server.')] });
-    const sync = value(interaction, 'chế_độ') === 'sync';
+    const mode = value(interaction, 'chế_độ');
+    const sync = mode === 'safe' || mode === 'sync';
+    const preserveExisting = mode !== 'sync';
     const result = await setupFromSnapshot(guild, {
       sync,
+      preserveExisting,
       progress: message => interaction.editReply({ embeds: [baseEmbed('⚙️ ĐANG ĐỒNG BỘ', message)] })
     });
     const warningText = result.warnings.length
       ? `\n\n⚠️ **${result.warnings.length} lưu ý:**\n${result.warnings.slice(0, 10).map(item => `• ${item}`).join('\n')}${result.warnings.length > 10 ? `\n• Và ${result.warnings.length - 10} lưu ý khác.` : ''}`
       : '';
-    return interaction.editReply({ embeds: [successEmbed(`Đã ${sync ? 'đồng bộ' : 'bổ sung'} **${result.roles} role** và **${result.channels} category/kênh** từ snapshot của **${guild.name}**.${warningText}\n\nBot không tạo lại role managed của bot khác và không xóa role/kênh hiện có.`)] });
+    return interaction.editReply({ embeds: [successEmbed(`Đã ${sync ? 'tái cấu trúc' : 'bổ sung'} **${result.roles} role** và **${result.channels} category/kênh** cho **${guild.name}**.${warningText}\n\n✅ Không xóa kênh nên lịch sử chat được giữ nguyên.\n✅ Không xóa/tạo lại role cũ nên thành viên vẫn giữ nguyên role.\n✅ Role fandom mặc định là **Aikon**.`)] });
   }
 
   if (commandName === 'scan_server') {
@@ -74,7 +78,7 @@ async function handleCommand(interaction) {
     const panelType = value(interaction, 'loại');
     if (panelType === 'verify') {
       const row = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId('verify_member').setLabel('Xác minh thành viên').setEmoji('🐉').setStyle(ButtonStyle.Success));
-      await interaction.channel.send({ embeds: [baseEmbed('🐉 CHÀO MỪNG ĐẾN ĐỘNG RỒNG GALAXY', `Hãy đọc nội quy của cộng đồng, sau đó bấm nút bên dưới để nhận role **${config.memberRoleName}**.`)], components: [row] });
+      await interaction.channel.send({ embeds: [baseEmbed('🐉 CHÀO MỪNG ĐẾN ĐỘNG RỒNG GALAXY', `Hãy đọc nội quy của cộng đồng, sau đó bấm nút bên dưới để gia nhập fandom **${config.memberRoleName}**.`)], components: [row] });
       return reply(interaction, { embeds: [successEmbed('Đã đăng bảng xác minh.')] });
     }
     const row = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId('ticket_open').setLabel('Mở ticket hỗ trợ').setEmoji('🎫').setStyle(ButtonStyle.Primary));
@@ -144,7 +148,7 @@ async function handleButton(interaction) {
     if (!role) return reply(interaction, { embeds: [errorEmbed(`Không tìm thấy role **${config.memberRoleName}**.`)] });
     if (!role.editable) return reply(interaction, { embeds: [errorEmbed('Role thành viên đang nằm cao hơn role bot.')] });
     await interaction.member.roles.add(role, 'Xác minh cộng đồng Dragon Galaxy');
-    return reply(interaction, { embeds: [successEmbed(`Bạn đã nhận role ${role}. Chào mừng đến Động Rồng Galaxy!`)] });
+    return reply(interaction, { embeds: [successEmbed(`Bạn đã trở thành **Aikon**! Chào mừng đến Động Rồng Galaxy ${role}.`)] });
   }
 
   if (interaction.customId === 'ticket_open') {
@@ -201,7 +205,8 @@ export async function handleInteraction(interaction) {
 }
 
 export async function sendWelcome(member) {
-  const channel = member.guild.channels.cache.find(item => item.isTextBased() && item.name.includes('𝐰𝐞𝐥𝐜𝐨𝐦𝐞'));
+  const channel = member.guild.channels.cache.get('1146428977402097725')
+    || member.guild.channels.cache.find(item => item.isTextBased() && (item.name.includes('chào-mừng') || item.name.includes('𝐰𝐞𝐥𝐜𝐨𝐦𝐞')));
   if (!channel) return;
   await channel.send({ embeds: [baseEmbed(`👋 Chào mừng ${member.user.username}!`, `Xin chào ${member}, bạn là thành viên thứ **${member.guild.memberCount}** của **${member.guild.name}**. Hãy đọc nội quy và xác minh để bắt đầu.`).setThumbnail(member.user.displayAvatarURL({ size: 256 }))] });
 }

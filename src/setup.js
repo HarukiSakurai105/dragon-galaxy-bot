@@ -1,5 +1,6 @@
 import { ChannelType, PermissionFlagsBits, PermissionsBitField } from 'discord.js';
 import { categorySpecs, channelSpecs, roleSpecs, snapshot } from './template.js';
+import { communityTheme } from './theme.js';
 import { getGuildData, updateGuildData } from './storage.js';
 
 function permissionBits(names = []) {
@@ -39,22 +40,27 @@ function mapOverwrites(guild, overwrites, rolesByName, roleMap) {
   return result;
 }
 
-async function ensureRole(guild, spec, storedId, sync, warnings) {
+async function ensureRole(guild, spec, storedId, sync, preserveExisting, warnings) {
   let role = guild.roles.cache.get(storedId)
     || (guild.id === snapshot.server.id ? guild.roles.cache.get(spec.id) : null)
-    || guild.roles.cache.find(item => !item.managed && item.name === spec.name);
-  const options = {
+    || guild.roles.cache.find(item => !item.managed && (item.name === spec.name || item.name === spec.originalName));
+  const visualOptions = {
     name: spec.name,
     colors: { primaryColor: primaryColor(spec.color) },
     hoist: Boolean(spec.hoist),
     mentionable: Boolean(spec.mentionable),
-    permissions: new PermissionsBitField(permissionBits(spec.permissions)),
     reason: 'Dragon Galaxy snapshot synchronization'
   };
+  const fullOptions = {
+    ...visualOptions,
+    permissions: new PermissionsBitField(permissionBits(spec.permissions))
+  };
   if (!role) {
-    role = await guild.roles.create(options);
+    role = await guild.roles.create(fullOptions);
   } else if (sync && role.editable) {
-    await role.edit(options);
+    // Sửa chính role cũ theo ID nên mọi thành viên vẫn giữ nguyên role.
+    // Chế độ an toàn không ghi đè permission đang vận hành trên server.
+    await role.edit(preserveExisting ? visualOptions : fullOptions);
   } else if (sync && !role.editable) {
     warnings.push(`Không thể cập nhật role ${role.name}: role cao hơn bot hoặc do Discord quản lý.`);
   }
@@ -87,11 +93,11 @@ function channelEditOptions(spec, parentId) {
   return options;
 }
 
-async function ensureChannel(guild, spec, storedId, parentId, overwrites, sync, warnings) {
+async function ensureChannel(guild, spec, storedId, parentId, overwrites, sync, preserveExisting, warnings) {
   const expectedType = supportedChannelType(spec.typeCode);
   let channel = guild.channels.cache.get(storedId)
     || (guild.id === snapshot.server.id ? guild.channels.cache.get(spec.id) : null)
-    || guild.channels.cache.find(item => item.name === spec.name && item.type === expectedType && (spec.type === 'Category' || item.parentId === parentId));
+    || guild.channels.cache.find(item => (item.name === spec.name || item.name === spec.originalName) && item.type === expectedType && (spec.type === 'Category' || item.parentId === parentId));
 
   if (!channel) {
     const createOptions = {
@@ -107,8 +113,11 @@ async function ensureChannel(guild, spec, storedId, parentId, overwrites, sync, 
       channel = await guild.channels.create({ ...createOptions, type: ChannelType.GuildText });
     }
   } else if (sync) {
+    // Đổi tên/di chuyển chính kênh cũ theo ID; không clone hoặc xóa nên lịch sử chat còn nguyên.
     if (channel.manageable) await channel.edit(channelEditOptions(spec, parentId));
-    await channel.permissionOverwrites.set(overwrites, 'Dragon Galaxy snapshot synchronization').catch(error => warnings.push(`${spec.name}: không cập nhật được permission (${error.message}).`));
+    if (!preserveExisting) {
+      await channel.permissionOverwrites.set(overwrites, 'Dragon Galaxy snapshot synchronization').catch(error => warnings.push(`${spec.name}: không cập nhật được permission (${error.message}).`));
+    }
   }
   return channel;
 }
@@ -136,7 +145,7 @@ async function orderStructure(guild, roleMap, channelMap, warnings) {
   }
 }
 
-export async function setupFromSnapshot(guild, { sync = false, progress = async () => {} } = {}) {
+export async function setupFromSnapshot(guild, { sync = false, preserveExisting = true, progress = async () => {} } = {}) {
   await Promise.all([guild.roles.fetch(), guild.channels.fetch(), guild.members.fetch().catch(() => null)]);
   const stored = await getGuildData(guild.id);
   const roleMap = { ...(stored.roles || {}) };
@@ -144,10 +153,15 @@ export async function setupFromSnapshot(guild, { sync = false, progress = async 
   const rolesByName = new Map();
   const warnings = [];
 
+  if (sync && guild.name !== communityTheme.serverName) {
+    await guild.setName(communityTheme.serverName, 'Đồng bộ thương hiệu Động Rồng Galaxy / Aikon')
+      .catch(error => warnings.push(`Không đổi được tên server: ${error.message}`));
+  }
+
   await progress(`Đang đồng bộ ${roleSpecs.length} role...`);
   for (const spec of roleSpecs) {
     try {
-      const role = await ensureRole(guild, spec, roleMap[spec.id], sync, warnings);
+      const role = await ensureRole(guild, spec, roleMap[spec.id], sync, preserveExisting, warnings);
       roleMap[spec.id] = role.id;
       rolesByName.set(spec.name, role);
     } catch (error) {
@@ -161,7 +175,7 @@ export async function setupFromSnapshot(guild, { sync = false, progress = async 
   for (const spec of categorySpecs) {
     try {
       const overwrites = mapOverwrites(guild, spec.permissionOverwrites, rolesByName, roleMap);
-      const category = await ensureChannel(guild, spec, channelMap[spec.id], null, overwrites, sync, warnings);
+      const category = await ensureChannel(guild, spec, channelMap[spec.id], null, overwrites, sync, preserveExisting, warnings);
       channelMap[spec.id] = category.id;
     } catch (error) {
       warnings.push(`Category ${spec.name}: ${error.message}`);
@@ -173,7 +187,7 @@ export async function setupFromSnapshot(guild, { sync = false, progress = async 
     try {
       const parentId = spec.parentId ? channelMap[spec.parentId] : null;
       const overwrites = mapOverwrites(guild, spec.permissionOverwrites, rolesByName, roleMap);
-      const channel = await ensureChannel(guild, spec, channelMap[spec.id], parentId, overwrites, sync, warnings);
+      const channel = await ensureChannel(guild, spec, channelMap[spec.id], parentId, overwrites, sync, preserveExisting, warnings);
       channelMap[spec.id] = channel.id;
     } catch (error) {
       warnings.push(`Kênh ${spec.name}: ${error.message}`);
@@ -191,13 +205,16 @@ export async function setupFromSnapshot(guild, { sync = false, progress = async 
     roles: roleMap,
     channels: channelMap,
     lastSetupAt: new Date().toISOString(),
-    sourceSnapshot: snapshot.generatedAt
+    sourceSnapshot: snapshot.generatedAt,
+    preserveExisting
   }));
 
   return {
     state,
     roles: Object.keys(roleMap).length,
     channels: Object.keys(channelMap).length,
+    preservedHistory: true,
+    preservedRoleMemberships: true,
     warnings
   };
 }
