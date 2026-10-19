@@ -4,7 +4,8 @@ Tạo từ snapshot: 2026-10-15T04:27:04.446Z
 
 ## Cam kết của chế độ “Tái cấu trúc an toàn”
 
-- Không xóa bất kỳ kênh nào.
+- Không xóa các kênh cũ thuộc snapshot.
+- Riêng khu SẢNH CHÍNH dư thừa từng do bot tạo sẽ được gỡ theo yêu cầu mới nhất.
 - Kênh được đổi tên/di chuyển trên đúng ID cũ nên lịch sử chat và file đính kèm vẫn còn.
 - Không xóa hoặc tạo lại role cũ; thành viên vẫn giữ nguyên role đang có.
 - Không ghi đè permission hiện tại của role và kênh.
@@ -217,25 +218,12 @@ Tạo từ snapshot: 2026-10-15T04:27:04.446Z
 - `1328573217484439572` — **📖𝐫𝐨𝐨𝐦-𝐠𝐮𝐢𝐝𝐞** → **╰・📖・hướng-dẫn-phòng**
 - `1284689876138332252` — **🌺𝐚𝐢𝐤𝐨-𝐡𝐢𝐦𝐞𝐠𝐢𝐦𝐢-𝐜𝐡𝐚𝐧𝐧𝐞𝐥** → **╰・🌺・aiko-himegimi**
 
-## Khu vực trang trí được bổ sung (10)
-
-- Category mới: **╔★・SẢNH CHÍNH・★╗**
-- Phòng mới: **╭・💬・trò-chuyện-chính**
-- Phòng mới: **├・🎮・chat-game**
-- Phòng mới: **├・⛏️・chat-minecraft**
-- Phòng mới: **├・📸・khoảnh-khắc**
-- Phòng mới: **├・📣・rủ-rê**
-- Phòng mới: **├・⚖️・tòa-án**
-- Phòng mới: **├・👋・giới-thiệu-bản-thân**
-- Phòng mới: **├・🎵・nhạc-nền**
-- Phòng mới: **╰・⚜️・văn-phòng-aiko**
-
 ## Tổng kết
 
 - 50 role đổi tên; 0 role giữ nguyên tên.
 - 29 role managed của bot/integration do Discord quản lý được giữ nguyên.
 - 14 category đổi tên.
 - 61 phòng chat/voice/forum đổi tên.
-- 1 category và 9 phòng trang trí được tạo thêm.
-- 75 category/phòng cũ được nhận diện bằng ID cũ; tổng cấu trúc sau setup là 85 category/phòng.
+- Khu SẢNH CHÍNH bổ sung đã được loại khỏi template.
+- 75 category/phòng cũ được nhận diện bằng ID cũ; tổng cấu trúc sau setup là 75 category/phòng.
 - 0 kênh bị xóa; 0 role bị xóa; 0 thành viên bị gỡ role.

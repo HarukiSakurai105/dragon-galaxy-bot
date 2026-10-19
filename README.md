@@ -13,14 +13,14 @@ Bot Discord riêng cho **🐉🪐Động Rồng Galaxy🌸❄**, được tạo 
 
 - `/setup`:
   - **Chỉ tạo phần còn thiếu**: không sửa/xóa cấu trúc hiện có.
-  - **Server mới — tạo toàn bộ cấu trúc**: đặt tên server, tạo đầy đủ role/category/phòng, áp dụng permission từ template và sắp xếp role từ thấp lên cao; không xóa những mục đã có.
-  - **Tái cấu trúc an toàn**: đổi tên và sắp xếp chính kênh/role cũ theo ID. Không xóa kênh, không mất lịch sử chat, không gỡ role khỏi thành viên và không ghi đè permission hiện tại.
+  - **Server mới — tạo toàn bộ cấu trúc**: đặt tên server, tạo đầy đủ role/category/phòng, áp dụng permission từ template và sắp xếp role từ thấp lên cao.
+  - **Tái cấu trúc an toàn**: đổi tên và sắp xếp chính kênh/role cũ theo ID. Không xóa kênh cũ trong snapshot, không mất lịch sử chat, không gỡ role khỏi thành viên và không ghi đè permission hiện tại.
   - **Đồng bộ cả permission**: chế độ nâng cao; đồng bộ permission từ snapshot nhưng vẫn không xóa kênh hoặc role.
 - `/scan_server`: xuất báo cáo Markdown + JSON và link tải trực tiếp.
 - `npm run preview-changes`: xuất `CHANGE-PREVIEW.md` liệt kê tên cũ → tên mới trước khi chạy setup.
 - `/panel`: bảng xác minh thành viên hoặc ticket hỗ trợ.
 - Ticket riêng tư, Staff xử lý, đóng xong tự xóa sau 5 phút.
-- Toàn bộ 15 category dùng kiểu `╔★・TÊN SẢNH・★╗`; toàn bộ 70 phòng dùng nhánh `╭` / `├` / `╰` giống mẫu Discord.
+- Toàn bộ 14 category dùng kiểu `╔★・TÊN SẢNH・★╗`; toàn bộ 61 phòng dùng nhánh `╭` / `├` / `╰` giống mẫu Discord.
 - Welcome/leave log, thông báo, cấp/gỡ role, clear, timeout, kick và ban.
 - Đa server, không cần `GUILD_ID`; dữ liệu mỗi server được lưu riêng.
 
@@ -59,7 +59,7 @@ npm install
 npm start
 ```
 
-Sau khi bot online, chủ server chạy `/setup` → **Tái cấu trúc an toàn — giữ chat và role thành viên**. Bot sẽ giữ tên server đúng là **🐉🪐Động Rồng Galaxy🌸❄**, dùng **🌌・Aikon** làm role fandom, đổi toàn bộ 50 role cộng đồng về font thường có icon, trang trí toàn bộ category/phòng theo cùng một kiểu nhánh cây, đổi tên 75 category/kênh cũ ngay trên ID cũ và tạo thêm 1 category cùng 9 phòng.
+Sau khi bot online, chủ server chạy `/setup` → **Tái cấu trúc an toàn — giữ chat và role thành viên**. Bot sẽ giữ tên server đúng là **🐉🪐Động Rồng Galaxy🌸❄**, dùng **🌌・Aikon** làm role fandom, đổi toàn bộ 50 role cộng đồng về font thường có icon, trang trí toàn bộ 75 category/kênh cũ theo cùng kiểu nhánh cây và gỡ khu SẢNH CHÍNH bổ sung đang dư thừa.
 
 Bot mới mặc định dùng health port `3001`, nên có thể chạy cùng máy với bot UPD đang dùng port `3000`.
 

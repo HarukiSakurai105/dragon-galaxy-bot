@@ -209,23 +209,17 @@ export const communityTheme = {
     '1150412032248647690': '➕ Tạo phòng riêng',
     '1227132853817573498': '🏯 Phòng của Aiko'
   },
-  additionalCategories: [
-    {
-      id: 'aikon-main-lobby',
-      name: '╔★・SẢNH CHÍNH・★╗',
-      position: 0.5
-    }
-  ],
-  additionalChannels: [
-    { id: 'aikon-main-chat', parentId: 'aikon-main-lobby', name: '╭・💬・trò-chuyện-chính', position: 0, topic: 'Phòng trò chuyện chính dành cho cộng đồng Aikon.' },
-    { id: 'aikon-game-chat', parentId: 'aikon-main-lobby', name: '├・🎮・chat-game', position: 1, topic: 'Cùng Aikon trò chuyện và tìm đồng đội chơi game.' },
-    { id: 'aikon-minecraft-chat', parentId: 'aikon-main-lobby', name: '├・⛏️・chat-minecraft', position: 2, topic: 'Khu trò chuyện Minecraft của cộng đồng Aikon.' },
-    { id: 'aikon-moments', parentId: 'aikon-main-lobby', name: '├・📸・khoảnh-khắc', position: 3, topic: 'Chia sẻ những khoảnh khắc đáng nhớ của cộng đồng.' },
-    { id: 'aikon-invites', parentId: 'aikon-main-lobby', name: '├・📣・rủ-rê', position: 4, topic: 'Rủ nhau chơi game, xem phim hoặc tham gia hoạt động.' },
-    { id: 'aikon-court', parentId: 'aikon-main-lobby', name: '├・⚖️・tòa-án', position: 5, topic: 'Khu xử án vui và giải quyết những vụ việc trong cộng đồng.' },
-    { id: 'aikon-intro', parentId: 'aikon-main-lobby', name: '├・👋・giới-thiệu-bản-thân', position: 6, topic: 'Aikon mới hãy giới thiệu bản thân tại đây.' },
-    { id: 'aikon-background-music', parentId: 'aikon-main-lobby', name: '├・🎵・nhạc-nền', position: 7, topic: 'Chia sẻ nhạc nền, playlist và bài hát yêu thích.' },
-    { id: 'aikon-office', parentId: 'aikon-main-lobby', name: '╰・⚜️・văn-phòng-aiko', position: 8, topic: 'Văn phòng và góc sinh hoạt đặc biệt của Aiko.' }
+  deprecatedGeneratedChannelKeys: [
+    'aikon-main-chat',
+    'aikon-game-chat',
+    'aikon-minecraft-chat',
+    'aikon-moments',
+    'aikon-invites',
+    'aikon-court',
+    'aikon-intro',
+    'aikon-background-music',
+    'aikon-office',
+    'aikon-main-lobby'
   ]
 };
 

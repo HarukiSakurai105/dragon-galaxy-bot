@@ -69,7 +69,10 @@ async function handleCommand(interaction) {
     const permissionText = fresh || mode === 'sync'
       ? '\n✅ Đã áp dụng permission role và permission kênh từ template.'
       : '\n✅ Giữ nguyên permission hiện tại.';
-    return interaction.editReply({ embeds: [successEmbed(`Đã ${action} **${result.roles} role** và **${result.channels} category/kênh** cho **${guild.name}**.${warningText}\n\n✅ Không xóa kênh nên lịch sử chat được giữ nguyên.\n✅ Không xóa/tạo lại role cũ nên thành viên vẫn giữ nguyên role.${permissionText}\n✅ Role fandom mặc định là **Aikon**.`)] });
+    const cleanupText = result.removedDeprecatedChannels
+      ? `\n🧹 Đã xóa **${result.removedDeprecatedChannels}** category/phòng thuộc khu SẢNH CHÍNH dư thừa.`
+      : '\n✅ Không xóa các kênh cũ từ bản scan.';
+    return interaction.editReply({ embeds: [successEmbed(`Đã ${action} **${result.roles} role** và **${result.channels} category/kênh** cho **${guild.name}**.${warningText}\n\n✅ Lịch sử của các kênh cũ từ bản scan được giữ nguyên.\n✅ Không xóa/tạo lại role cũ nên thành viên vẫn giữ nguyên role.${permissionText}${cleanupText}\n✅ Role fandom mặc định là **Aikon**.`)] });
   }
 
   if (commandName === 'scan_server') {

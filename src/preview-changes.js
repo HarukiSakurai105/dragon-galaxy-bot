@@ -21,7 +21,8 @@ const lines = [
   '',
   '## Cam kết của chế độ “Tái cấu trúc an toàn”',
   '',
-  '- Không xóa bất kỳ kênh nào.',
+  '- Không xóa các kênh cũ thuộc snapshot.',
+  '- Riêng khu SẢNH CHÍNH dư thừa từng do bot tạo sẽ được gỡ theo yêu cầu mới nhất.',
   '- Kênh được đổi tên/di chuyển trên đúng ID cũ nên lịch sử chat và file đính kèm vẫn còn.',
   '- Không xóa hoặc tạo lại role cũ; thành viên vẫn giữ nguyên role đang có.',
   '- Không ghi đè permission hiện tại của role và kênh.',
@@ -59,18 +60,22 @@ const lines = [
   '',
   ...scannedChannels.map(mappingLine),
   '',
-  `## Khu vực trang trí được bổ sung (${additionalCategories.length + additionalChannels.length})`,
-  '',
-  ...additionalCategories.map(category => `- Category mới: **${category.name}**`),
-  ...additionalChannels.map(channel => `- Phòng mới: **${channel.name}**`),
-  '',
+  ...(additionalCategories.length + additionalChannels.length ? [
+    `## Khu vực trang trí được bổ sung (${additionalCategories.length + additionalChannels.length})`,
+    '',
+    ...additionalCategories.map(category => `- Category mới: **${category.name}**`),
+    ...additionalChannels.map(channel => `- Phòng mới: **${channel.name}**`),
+    ''
+  ] : []),
   '## Tổng kết',
   '',
   `- ${changedRoles.length} role đổi tên; ${unchangedRoles.length} role giữ nguyên tên.`,
   `- ${snapshot.roles.filter(role => role.managed).length} role managed của bot/integration do Discord quản lý được giữ nguyên.`,
   `- ${scannedCategories.length} category đổi tên.`,
   `- ${scannedChannels.length} phòng chat/voice/forum đổi tên.`,
-  `- ${additionalCategories.length} category và ${additionalChannels.length} phòng trang trí được tạo thêm.`,
+  ...(additionalCategories.length + additionalChannels.length
+    ? [`- ${additionalCategories.length} category và ${additionalChannels.length} phòng trang trí được tạo thêm.`]
+    : ['- Khu SẢNH CHÍNH bổ sung đã được loại khỏi template.']),
   `- ${scannedCategories.length + scannedChannels.length} category/phòng cũ được nhận diện bằng ID cũ; tổng cấu trúc sau setup là ${allChannels.length} category/phòng.`,
   '- 0 kênh bị xóa; 0 role bị xóa; 0 thành viên bị gỡ role.'
 ];

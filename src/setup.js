@@ -154,6 +154,27 @@ async function orderStructure(guild, roleMap, channelMap, warnings) {
   }
 }
 
+async function removeDeprecatedGeneratedChannels(guild, channelMap, warnings) {
+  let removed = 0;
+  for (const key of communityTheme.deprecatedGeneratedChannelKeys || []) {
+    const channelId = channelMap[key];
+    if (!channelId) continue;
+    const channel = guild.channels.cache.get(channelId);
+    if (channel) {
+      try {
+        await channel.delete('Gỡ khu SẢNH CHÍNH dư thừa theo yêu cầu chủ server');
+        removed += 1;
+        delete channelMap[key];
+      } catch (error) {
+        warnings.push(`Không xóa được kênh dư thừa ${channel.name}: ${error.message}`);
+      }
+    } else {
+      delete channelMap[key];
+    }
+  }
+  return removed;
+}
+
 export async function setupFromSnapshot(guild, { sync = false, preserveExisting = true, progress = async () => {} } = {}) {
   await Promise.all([guild.roles.fetch(), guild.channels.fetch(), guild.members.fetch().catch(() => null)]);
   const stored = await getGuildData(guild.id);
@@ -161,6 +182,12 @@ export async function setupFromSnapshot(guild, { sync = false, preserveExisting 
   const channelMap = { ...(stored.channels || {}) };
   const rolesByName = new Map();
   const warnings = [];
+  let removedDeprecatedChannels = 0;
+
+  if (sync) {
+    await progress('Đang gỡ khu SẢNH CHÍNH dư thừa...');
+    removedDeprecatedChannels = await removeDeprecatedGeneratedChannels(guild, channelMap, warnings);
+  }
 
   if (sync && guild.name !== communityTheme.serverName) {
     await guild.setName(communityTheme.serverName, 'Đồng bộ thương hiệu Động Rồng Galaxy / Aikon')
@@ -224,6 +251,7 @@ export async function setupFromSnapshot(guild, { sync = false, preserveExisting 
     channels: Object.keys(channelMap).length,
     preservedHistory: true,
     preservedRoleMemberships: true,
+    removedDeprecatedChannels,
     warnings
   };
 }
