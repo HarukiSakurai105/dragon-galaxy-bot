@@ -16,6 +16,7 @@ Bot Discord riêng cho **🐉🪐Động Rồng Galaxy🌸❄**, được tạo 
   - **Tái cấu trúc an toàn**: đổi tên và sắp xếp chính kênh/role cũ theo ID. Không xóa kênh, không mất lịch sử chat, không gỡ role khỏi thành viên và không ghi đè permission hiện tại.
   - **Đồng bộ cả permission**: chế độ nâng cao; đồng bộ permission từ snapshot nhưng vẫn không xóa kênh hoặc role.
 - `/scan_server`: xuất báo cáo Markdown + JSON và link tải trực tiếp.
+- `npm run preview-changes`: xuất `CHANGE-PREVIEW.md` liệt kê tên cũ → tên mới trước khi chạy setup.
 - `/panel`: bảng xác minh thành viên hoặc ticket hỗ trợ.
 - Ticket riêng tư, Staff xử lý, đóng xong tự xóa sau 5 phút.
 - Welcome/leave log, thông báo, cấp/gỡ role, clear, timeout, kick và ban.

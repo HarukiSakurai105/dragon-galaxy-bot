@@ -8,8 +8,9 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
-    "check": "node --check src/index.js && node --check src/config.js && node --check src/commands.js && node --check src/embeds.js && node --check src/interactions.js && node --check src/report.js && node --check src/setup.js && node --check src/storage.js && node --check src/template.js && node --check src/theme.js",
-    "validate-template": "node src/validate-template.js"
+    "check": "node --check src/index.js && node --check src/config.js && node --check src/commands.js && node --check src/embeds.js && node --check src/interactions.js && node --check src/preview-changes.js && node --check src/report.js && node --check src/setup.js && node --check src/storage.js && node --check src/template.js && node --check src/theme.js",
+    "validate-template": "node src/validate-template.js",
+    "preview-changes": "node src/preview-changes.js"
   },
   "engines": {
     "node": ">=20.0.0"
