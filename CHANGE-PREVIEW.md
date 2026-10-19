@@ -17,16 +17,10 @@ Tạo từ snapshot: 2026-10-15T04:27:04.446Z
 
 ## Role được đổi tên (50)
 
-- `1555520791137751100` — **Quản Lý của Aiko** → **👑・Quản Lý Aiko**
-- `1555520206921801758` — **Quản Lý của Vtuber khác** → **🎭・Quản Lý Vtuber Khác**
-- `1495664908132417566` — **16+** → **🔞・16+**
-- `1495665223749730365` — **18+** → **🔞・18+**
-- `1370971392681705592` — **Gokyaku-sama (Giới tính trung lập )** → **⚪・Giới Tính Trung Lập**
-- `1370971328437555200` — **Onee-san (Chị)** → **🌸・Onee-san (Chị)**
-- `1370971205598974085` — **Onii-san (Anh)** → **🌙・Onii-san (Anh)**
-- `1370961207820943451` — **Visual Novel** → **📖・Visual Novel**
-- `1227809621469696000` — **Cá Ngố Vô Tri** → **🐟・Cá Ngố Vô Tri**
 - `1221839722243162113` — **Muted** → **🔇・Muted**
+- `1227809621469696000` — **Cá Ngố Vô Tri** → **🐟・Cá Ngố Vô Tri**
+- `1311020104087240724` — **Ngắm gái bỏ anh em** → **👀・Hội Ngắm Gái**
+- `1239219201873285180` — **Con nghẹo ko chạm cỏ** → **🌱・Hội Không Chạm Cỏ**
 - `1370961371931349133` — **Khác** → **🎲・Game Khác**
 - `1151201509573406770` — **Valorant** → **🔺・Valorant**
 - `1151199782635831306` — **NARAKA : BLADE POINT** → **⚔️・NARAKA Bladepoint**
@@ -37,39 +31,110 @@ Tạo từ snapshot: 2026-10-15T04:27:04.446Z
 - `1151199268099596378` — **League Of Legend** → **⚔️・League of Legends**
 - `1151198979393081375` — **Counter Strike 2** → **🔫・Counter-Strike 2**
 - `1151198722466787488` — **Arena Of Valor** → **🏆・Arena of Valor**
-- `1150457424722001971` — **Aikon** → **🌌・Aikon**
+- `1370961207820943451` — **Visual Novel** → **📖・Visual Novel**
+- `1495664908132417566` — **16+** → **🔞・16+**
+- `1495665223749730365` — **18+** → **🔞・18+**
+- `1370971392681705592` — **Gokyaku-sama (Giới tính trung lập )** → **⚪・Giới Tính Trung Lập**
+- `1370971205598974085` — **Onii-san (Anh)** → **🌙・Onii-san (Anh)**
+- `1370971328437555200` — **Onee-san (Chị)** → **🌸・Onee-san (Chị)**
 - `1240003349856911421` — **Bé Con** → **🧸・Bé Con**
-- `1150453864185725028` — **Himegimi Friend** → **🤝・Bạn của Aiko**
-- `1239219201873285180` — **Con nghẹo ko chạm cỏ** → **🌱・Hội Không Chạm Cỏ**
-- `1311020104087240724` — **Ngắm gái bỏ anh em** → **👀・Hội Ngắm Gái**
-- `1117746370791624725` — **🤖 ✿ 𝓑𝓸𝓽 ✿** → **🤖・Bot**
-- `1170947125618683975` — **My Brother** → **🧑‍🤝‍🧑・Anh Em**
-- `1191619678305533992` — **AiSho** → **💞・AiSho**
-- `1170680282551160955` — **✂️ ✿ 𝓔𝓭𝓲𝓽𝓸𝓻 ✿** → **✂️・Editor**
-- `1170671295906721843` — **🎨 ✿ 𝓐𝓻𝓽𝓲𝓼𝓽 𝓿𝓪̀ 𝓡𝓲𝓰𝓰𝓮𝓻 ✿** → **🎨・Artist và Rigger**
-- `1170679535809855570` — **👪 ✿ 𝓜𝓪𝓶𝓪 𝓿𝓪̀ 𝓟𝓪𝓹𝓪 ✿** → **👪・Mama và Papa**
-- `1213774130038439956` — **🐲 ✿ 𝓒𝓪̣̂𝓷 𝓣𝓱𝓪̂̀𝓷 𝓥𝓾̛𝓸̛𝓷𝓰 𝓠𝓾𝓸̂́𝓬 𝓡𝓸̂̀𝓷𝓰 ✿** → **🐲・Cận Thần Vương Quốc Rồng**
-- `1240002831272902797` — **🌸 ✿ 𝓮𝓶 𝓰𝓪́𝓲 𝓬𝓾̉𝓪 𝓐𝓲𝓴𝓸 𝓗𝓲𝓶𝓮𝓰𝓲𝓶𝓲 ✿** → **🌸・Em Gái của Aiko Himegimi**
-- `1227136380136853604` — **💋 ✿ 𝓫𝓮́ 𝓬𝓱𝓴 𝓬𝓾̉𝓪 𝓐𝓲𝓴𝓸 𝓗𝓲𝓶𝓮𝓰𝓲𝓶𝓲 ✿** → **💋・Bé Cưng của Aiko Himegimi**
 - `1178935450291941427` — **🐣 ✿ 𝓓𝓻𝓪𝓰𝓸𝓷 𝓑𝓪𝓫𝔂 ✿** → **🐣・Aikon Mới**
+- `1150457424722001971` — **Aikon** → **🌌・Aikon**
+- `1191619678305533992` — **AiSho** → **💞・AiSho**
+- `1227136380136853604` — **💋 ✿ 𝓫𝓮́ 𝓬𝓱𝓴 𝓬𝓾̉𝓪 𝓐𝓲𝓴𝓸 𝓗𝓲𝓶𝓮𝓰𝓲𝓶𝓲 ✿** → **💋・Bé Cưng của Aiko Himegimi**
+- `1240002831272902797` — **🌸 ✿ 𝓮𝓶 𝓰𝓪́𝓲 𝓬𝓾̉𝓪 𝓐𝓲𝓴𝓸 𝓗𝓲𝓶𝓮𝓰𝓲𝓶𝓲 ✿** → **🌸・Em Gái của Aiko Himegimi**
 - `1178935646526636073` — **⭐ ✿ 𝓓𝓻𝓪𝓰𝓸𝓷 𝓢𝓽𝓪𝓻 𝓖𝓾𝓪𝓻𝓭𝓲𝓪𝓷 ✿** → **⭐・Tinh Tú Galaxy**
 - `1236719320755732553` — **🐉 ✿ 𝓓𝓻𝓪𝓰𝓸𝓷 𝓖𝓾𝓪𝓻𝓭𝓲𝓪𝓷 𝓖𝓪𝓵𝓪𝔁𝔂 ✿** → **🐉・Hộ Vệ Galaxy**
-- `1179113994263470213` — **🔧 ✿ 𝓜𝓸𝓭 𝓨𝓸𝓾𝓣𝓾𝓫𝓮 ✿** → **🔧・Moderator YouTube**
-- `1182156193431560292` — **⛏️ ✿ 𝓜𝓲𝓷𝓮𝓬𝓻𝓪𝓯𝓽 𝓢𝓥 ✿** → **🧱・Minecraft Server**
-- `1289208078079627376` — **Vsinger** → **🎙️・VSinger**
-- `1245693293665189949` — **📺 ✿ 𝓢𝓽𝓻𝓮𝓪𝓶𝓮𝓻 & 𝓨𝓸𝓾𝓣𝓾𝓫𝓮𝓻 ✿** → **📺・Streamer và YouTuber**
-- `1245693444513599580` — **🖼️ ✿ 𝓟𝓝𝓖 𝓥𝓽𝓾𝓫𝓮𝓻 ✿** → **🖼️・PNG Vtuber**
-- `1180598996616622100` — **🎤 ✿ 𝓥𝓽𝓾𝓫𝓮𝓻 / 𝓟𝓮𝓻𝓯𝓸𝓻𝓶𝓮𝓻 ✿** → **🎤・Vtuber và Performer**
+- `1213774130038439956` — **🐲 ✿ 𝓒𝓪̣̂𝓷 𝓣𝓱𝓪̂̀𝓷 𝓥𝓾̛𝓸̛𝓷𝓰 𝓠𝓾𝓸̂́𝓬 𝓡𝓸̂̀𝓷𝓰 ✿** → **🐲・Cận Thần Vương Quốc Rồng**
+- `1150453864185725028` — **Himegimi Friend** → **🤝・Bạn của Aiko**
+- `1170947125618683975` — **My Brother** → **🧑‍🤝‍🧑・Anh Em**
+- `1170679535809855570` — **👪 ✿ 𝓜𝓪𝓶𝓪 𝓿𝓪̀ 𝓟𝓪𝓹𝓪 ✿** → **👪・Mama và Papa**
 - `1443564327394213898` — **Mom Camile** → **💐・Mom Camile**
+- `1170680282551160955` — **✂️ ✿ 𝓔𝓭𝓲𝓽𝓸𝓻 ✿** → **✂️・Editor**
+- `1170671295906721843` — **🎨 ✿ 𝓐𝓻𝓽𝓲𝓼𝓽 𝓿𝓪̀ 𝓡𝓲𝓰𝓰𝓮𝓻 ✿** → **🎨・Artist và Rigger**
+- `1245693444513599580` — **🖼️ ✿ 𝓟𝓝𝓖 𝓥𝓽𝓾𝓫𝓮𝓻 ✿** → **🖼️・PNG Vtuber**
+- `1245693293665189949` — **📺 ✿ 𝓢𝓽𝓻𝓮𝓪𝓶𝓮𝓻 & 𝓨𝓸𝓾𝓣𝓾𝓫𝓮𝓻 ✿** → **📺・Streamer và YouTuber**
+- `1289208078079627376` — **Vsinger** → **🎙️・VSinger**
+- `1180598996616622100` — **🎤 ✿ 𝓥𝓽𝓾𝓫𝓮𝓻 / 𝓟𝓮𝓻𝓯𝓸𝓻𝓶𝓮𝓻 ✿** → **🎤・Vtuber và Performer**
+- `1182156193431560292` — **⛏️ ✿ 𝓜𝓲𝓷𝓮𝓬𝓻𝓪𝓯𝓽 𝓢𝓥 ✿** → **🧱・Minecraft Server**
+- `1117746370791624725` — **🤖 ✿ 𝓑𝓸𝓽 ✿** → **🤖・Bot**
+- `1477335395686420601` — **Người Đặc Biệt** → **💎・Người Đặc Biệt**
+- `1175522908190281910` — **🖤りん❄️** → **🖤・Rin**
+- `1178406728069554276` — **🍱 𝓑𝓑𝓠 𝓜𝓪𝓷𝓪𝓰𝓮𝓻** → **🍱・BBQ Manager**
+- `1179113994263470213` — **🔧 ✿ 𝓜𝓸𝓭 𝓨𝓸𝓾𝓣𝓾𝓫𝓮 ✿** → **🔧・Moderator YouTube**
 - `1189470324413173802` — **🐉 ✿ 𝓓𝓻𝓪𝓰𝓸𝓷 𝓜𝓪𝓲𝓭 ✿** → **🐉・Dragon Staff**
 - `1117740722163028048` — **🔰 ✿ 𝓜𝓸𝓭𝓮𝓻𝓪𝓽𝓸𝓻 ✿** → **🔰・Moderator**
-- `1477335395686420601` — **Người Đặc Biệt** → **💎・Người Đặc Biệt**
-- `1178406728069554276` — **🍱 𝓑𝓑𝓠 𝓜𝓪𝓷𝓪𝓰𝓮𝓻** → **🍱・BBQ Manager**
-- `1175522908190281910` — **🖤りん❄️** → **🖤・Rin**
+- `1555520206921801758` — **Quản Lý của Vtuber khác** → **🎭・Quản Lý Vtuber Khác**
 - `1117739533543415890` — **🌸 𝓢𝓪𝓴𝓾𝓻𝓪 𝓜𝓪𝓼𝓽𝓮𝓻** → **🌸・Galaxy Master**
+- `1555520791137751100` — **Quản Lý của Aiko** → **👑・Quản Lý Aiko**
 
 ## Role giữ nguyên tên (0)
 
+
+## Thứ tự role sau setup (cao xuống thấp)
+
+1. **👑・Quản Lý Aiko**
+2. **🌸・Galaxy Master**
+3. **🎭・Quản Lý Vtuber Khác**
+4. **🔰・Moderator**
+5. **🐉・Dragon Staff**
+6. **🔧・Moderator YouTube**
+7. **🍱・BBQ Manager**
+8. **🖤・Rin**
+9. **💎・Người Đặc Biệt**
+10. **🤖・Bot**
+11. **🧱・Minecraft Server**
+12. **🎤・Vtuber và Performer**
+13. **🎙️・VSinger**
+14. **📺・Streamer và YouTuber**
+15. **🖼️・PNG Vtuber**
+16. **🎨・Artist và Rigger**
+17. **✂️・Editor**
+18. **💐・Mom Camile**
+19. **👪・Mama và Papa**
+20. **🧑‍🤝‍🧑・Anh Em**
+21. **🤝・Bạn của Aiko**
+22. **🐲・Cận Thần Vương Quốc Rồng**
+23. **🐉・Hộ Vệ Galaxy**
+24. **⭐・Tinh Tú Galaxy**
+25. **🌸・Em Gái của Aiko Himegimi**
+26. **💋・Bé Cưng của Aiko Himegimi**
+27. **💞・AiSho**
+28. **🌌・Aikon**
+29. **🐣・Aikon Mới**
+30. **🧸・Bé Con**
+31. **🌸・Onee-san (Chị)**
+32. **🌙・Onii-san (Anh)**
+33. **⚪・Giới Tính Trung Lập**
+34. **🔞・18+**
+35. **🔞・16+**
+36. **📖・Visual Novel**
+37. **🏆・Arena of Valor**
+38. **🔫・Counter-Strike 2**
+39. **⚔️・League of Legends**
+40. **♟️・Teamfight Tactics**
+41. **⛏️・Minecraft**
+42. **🚂・Honkai Star Rail**
+43. **🌟・Genshin Impact**
+44. **⚔️・NARAKA Bladepoint**
+45. **🔺・Valorant**
+46. **🎲・Game Khác**
+47. **🌱・Hội Không Chạm Cỏ**
+48. **👀・Hội Ngắm Gái**
+49. **🐟・Cá Ngố Vô Tri**
+50. **🔇・Muted**
+
+## Permission quản trị được chuẩn hóa
+
+- **👑・Quản Lý Aiko**: `Administrator`
+- **🌸・Galaxy Master**: `Administrator`
+- **🎭・Quản Lý Vtuber Khác**: `ViewAuditLog`, `ManageGuild`, `ManageRoles`, `ManageChannels`, `ManageMessages`, `ManageThreads`, `ManageNicknames`, `ManageWebhooks`, `ManageEvents`, `KickMembers`, `BanMembers`, `ModerateMembers`, `MuteMembers`, `DeafenMembers`, `MoveMembers`
+- **🔰・Moderator**: `ViewAuditLog`, `ManageRoles`, `ManageChannels`, `ManageMessages`, `ManageThreads`, `ManageNicknames`, `KickMembers`, `BanMembers`, `ModerateMembers`, `MuteMembers`, `DeafenMembers`, `MoveMembers`
+- **🐉・Dragon Staff**: `ViewAuditLog`, `ManageRoles`, `ManageChannels`, `ManageMessages`, `ManageThreads`, `ManageNicknames`, `KickMembers`, `BanMembers`, `ModerateMembers`, `MuteMembers`, `DeafenMembers`, `MoveMembers`
+- **🔧・Moderator YouTube**: `ManageMessages`, `ManageThreads`, `ManageEvents`, `MoveMembers`
+- **🍱・BBQ Manager**: `ManageMessages`, `ManageThreads`, `ManageEvents`, `MoveMembers`
+- **🖤・Rin**: không có quyền quản trị đặc biệt
+- **💎・Người Đặc Biệt**: không có quyền quản trị đặc biệt
 
 ## Category được đổi tên (14)
 

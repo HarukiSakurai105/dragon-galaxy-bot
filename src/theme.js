@@ -1,3 +1,16 @@
+const managerPermissions = [
+  'ViewAuditLog', 'ManageGuild', 'ManageRoles', 'ManageChannels', 'ManageMessages',
+  'ManageThreads', 'ManageNicknames', 'ManageWebhooks', 'ManageEvents', 'KickMembers',
+  'BanMembers', 'ModerateMembers', 'MuteMembers', 'DeafenMembers', 'MoveMembers'
+];
+
+const moderatorPermissions = [
+  'ViewAuditLog', 'ManageRoles', 'ManageChannels', 'ManageMessages', 'ManageThreads', 'ManageNicknames', 'KickMembers',
+  'BanMembers', 'ModerateMembers', 'MuteMembers', 'DeafenMembers', 'MoveMembers'
+];
+
+const contentPermissions = ['ManageMessages', 'ManageThreads', 'ManageEvents', 'MoveMembers'];
+
 export const communityTheme = {
   serverName: '🐉🪐Động Rồng Galaxy🌸❄',
   fandomRoleId: '1150457424722001971',
@@ -53,6 +66,69 @@ export const communityTheme = {
     '1189470324413173802': '🐉・Dragon Staff',
     '1117740722163028048': '🔰・Moderator',
     '1117739533543415890': '🌸・Galaxy Master'
+  },
+  roleOrderHighToLow: [
+    '1555520791137751100',
+    '1117739533543415890',
+    '1555520206921801758',
+    '1117740722163028048',
+    '1189470324413173802',
+    '1179113994263470213',
+    '1178406728069554276',
+    '1175522908190281910',
+    '1477335395686420601',
+    '1117746370791624725',
+    '1182156193431560292',
+    '1180598996616622100',
+    '1289208078079627376',
+    '1245693293665189949',
+    '1245693444513599580',
+    '1170671295906721843',
+    '1170680282551160955',
+    '1443564327394213898',
+    '1170679535809855570',
+    '1170947125618683975',
+    '1150453864185725028',
+    '1213774130038439956',
+    '1236719320755732553',
+    '1178935646526636073',
+    '1240002831272902797',
+    '1227136380136853604',
+    '1191619678305533992',
+    '1150457424722001971',
+    '1178935450291941427',
+    '1240003349856911421',
+    '1370971328437555200',
+    '1370971205598974085',
+    '1370971392681705592',
+    '1495665223749730365',
+    '1495664908132417566',
+    '1370961207820943451',
+    '1151198722466787488',
+    '1151198979393081375',
+    '1151199268099596378',
+    '1151199333916614838',
+    '1151199395128299600',
+    '1151199612795883560',
+    '1151199656563462324',
+    '1151199782635831306',
+    '1151201509573406770',
+    '1370961371931349133',
+    '1239219201873285180',
+    '1311020104087240724',
+    '1227809621469696000',
+    '1221839722243162113'
+  ],
+  rolePermissions: {
+    '1555520791137751100': ['Administrator'],
+    '1117739533543415890': ['Administrator'],
+    '1555520206921801758': managerPermissions,
+    '1117740722163028048': moderatorPermissions,
+    '1189470324413173802': moderatorPermissions,
+    '1179113994263470213': contentPermissions,
+    '1178406728069554276': contentPermissions,
+    '1175522908190281910': [],
+    '1477335395686420601': []
   },
   channelNames: {
     '1146419909564305408': '📌・BẮT ĐẦU',

@@ -54,7 +54,9 @@ async function handleCommand(interaction) {
     const mode = value(interaction, 'chế_độ');
     const fresh = mode === 'fresh';
     const sync = fresh || mode === 'safe' || mode === 'sync';
-    const preserveExisting = mode !== 'sync';
+    // Server mới cần áp dụng đầy đủ permission từ template.
+    // Chỉ hai chế độ bảo toàn mới giữ nguyên permission hiện tại.
+    const preserveExisting = mode === 'missing' || mode === 'safe';
     const result = await setupFromSnapshot(guild, {
       sync,
       preserveExisting,
@@ -64,7 +66,10 @@ async function handleCommand(interaction) {
       ? `\n\n⚠️ **${result.warnings.length} lưu ý:**\n${result.warnings.slice(0, 10).map(item => `• ${item}`).join('\n')}${result.warnings.length > 10 ? `\n• Và ${result.warnings.length - 10} lưu ý khác.` : ''}`
       : '';
     const action = fresh ? 'khởi tạo server mới với' : sync ? 'tái cấu trúc' : 'bổ sung';
-    return interaction.editReply({ embeds: [successEmbed(`Đã ${action} **${result.roles} role** và **${result.channels} category/kênh** cho **${guild.name}**.${warningText}\n\n✅ Không xóa kênh nên lịch sử chat được giữ nguyên.\n✅ Không xóa/tạo lại role cũ nên thành viên vẫn giữ nguyên role.\n✅ Role fandom mặc định là **Aikon**.`)] });
+    const permissionText = fresh || mode === 'sync'
+      ? '\n✅ Đã áp dụng permission role và permission kênh từ template.'
+      : '\n✅ Giữ nguyên permission hiện tại.';
+    return interaction.editReply({ embeds: [successEmbed(`Đã ${action} **${result.roles} role** và **${result.channels} category/kênh** cho **${guild.name}**.${warningText}\n\n✅ Không xóa kênh nên lịch sử chat được giữ nguyên.\n✅ Không xóa/tạo lại role cũ nên thành viên vẫn giữ nguyên role.${permissionText}\n✅ Role fandom mặc định là **Aikon**.`)] });
   }
 
   if (commandName === 'scan_server') {

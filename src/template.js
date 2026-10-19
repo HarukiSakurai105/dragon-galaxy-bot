@@ -5,6 +5,13 @@ const templateUrl = new URL('../template/server-structure.json', import.meta.url
 export const snapshot = JSON.parse(readFileSync(templateUrl, 'utf8').replace(/^\uFEFF/, ''));
 
 const themedRoleNameById = new Map(snapshot.roles.map(role => [role.id, communityTheme.roleNames[role.id] || role.name]));
+const roleOrder = new Map((communityTheme.roleOrderHighToLow || []).map((id, index) => [id, index]));
+
+function themedRolePermissions(role) {
+  return Object.prototype.hasOwnProperty.call(communityTheme.rolePermissions || {}, role.id)
+    ? communityTheme.rolePermissions[role.id]
+    : role.permissions;
+}
 
 function themedOverwrites(overwrites = []) {
   return overwrites.map(overwrite => ({
@@ -46,8 +53,14 @@ function decorateChannelTree(channels) {
 
 export const roleSpecs = snapshot.roles
   .filter(role => !role.managed && role.name !== '@everyone')
-  .map(role => ({ ...role, originalName: role.name, name: communityTheme.roleNames[role.id] || role.name }))
-  .sort((a, b) => a.position - b.position);
+  .map(role => ({
+    ...role,
+    originalName: role.name,
+    name: communityTheme.roleNames[role.id] || role.name,
+    permissions: themedRolePermissions(role)
+  }))
+  // Template khai báo từ cao xuống thấp; Discord position được gán từ thấp lên cao.
+  .sort((a, b) => (roleOrder.get(b.id) ?? -1) - (roleOrder.get(a.id) ?? -1));
 
 const scannedCategorySpecs = snapshot.channels
   .filter(channel => channel.type === 'Category')
@@ -105,9 +118,13 @@ export function validateSnapshot() {
   if (duplicateRoles.length) throw new Error(`Template có role trùng tên: ${duplicateRoles.map(role => role.name).join(', ')}`);
   const missingRoleTheme = roleSpecs.filter(role => !communityTheme.roleNames[role.id]);
   if (missingRoleTheme.length) throw new Error(`Theme thiếu icon/tên thường cho ${missingRoleTheme.length} role.`);
+  const missingRoleOrder = roleSpecs.filter(role => !roleOrder.has(role.id));
+  if (missingRoleOrder.length) throw new Error(`Theme thiếu thứ tự cho ${missingRoleOrder.length} role.`);
   const styledFont = /[\u{1D400}-\u{1D7FF}]/u;
   const invalidRoleNames = roleSpecs.filter(role => !role.name.includes('・') || styledFont.test(role.name));
   if (invalidRoleNames.length) throw new Error(`Role chưa dùng font thường hoặc thiếu icon: ${invalidRoleNames.map(role => role.name).join(', ')}`);
+  const unexpectedAdmins = roleSpecs.filter(role => role.permissions.includes('Administrator') && !['1555520791137751100', '1117739533543415890'].includes(role.id));
+  if (unexpectedAdmins.length) throw new Error(`Role cấp Administrator ngoài dự kiến: ${unexpectedAdmins.map(role => role.name).join(', ')}`);
   const themedChannels = [...categorySpecs, ...channelSpecs];
   const missingTheme = themedChannels.filter(channel => !channel.isAdditional && !communityTheme.channelNames[channel.id]);
   if (missingTheme.length) throw new Error(`Theme Aikon thiếu ${missingTheme.length} kênh.`);

@@ -124,10 +124,19 @@ async function ensureChannel(guild, spec, storedId, parentId, overwrites, sync, 
 
 async function orderStructure(guild, roleMap, channelMap, warnings) {
   const orderedRoles = roleSpecs.map(spec => guild.roles.cache.get(roleMap[spec.id])).filter(Boolean);
+  const editableRoles = orderedRoles.filter(role => role.editable);
+  const lockedRoles = orderedRoles.filter(role => !role.editable);
+  if (lockedRoles.length) {
+    warnings.push(`${lockedRoles.length} role không thể sắp xếp vì đang cao hơn role bot.`);
+  }
   try {
-    await guild.roles.setPositions(orderedRoles.map((role, index) => ({ role, position: index + 1 })));
+    // roleSpecs đi từ cấp thấp đến cấp cao; position Discord càng lớn càng cao.
+    // Chỉ gửi role editable để một role nằm trên bot không làm hỏng toàn bộ lượt sắp xếp.
+    if (editableRoles.length) {
+      await guild.roles.setPositions(editableRoles.map((role, index) => ({ role, position: index + 1 })));
+    }
   } catch (error) {
-    warnings.push(`Không xếp được toàn bộ role: ${error.message}. Hãy kéo role bot lên cao nhất rồi chạy lại chế độ đồng bộ.`);
+    warnings.push(`Không xếp được role: ${error.message}. Hãy kéo role bot lên cao nhất rồi chạy lại /setup.`);
   }
 
   try {

@@ -40,6 +40,17 @@ const lines = [
   '',
   ...unchangedRoles.map(role => `- \`${role.id}\` — **${role.name}**${role.name === communityTheme.fandomRoleName ? ' ← role fandom mặc định' : ''}`),
   '',
+  '## Thứ tự role sau setup (cao xuống thấp)',
+  '',
+  ...[...roleSpecs].reverse().map((role, index) => `${index + 1}. **${role.name}**`),
+  '',
+  '## Permission quản trị được chuẩn hóa',
+  '',
+  ...roleSpecs
+    .filter(role => Object.prototype.hasOwnProperty.call(communityTheme.rolePermissions, role.id))
+    .reverse()
+    .map(role => `- **${role.name}**: ${role.permissions.length ? role.permissions.map(permission => `\`${permission}\``).join(', ') : 'không có quyền quản trị đặc biệt'}`),
+  '',
   `## Category được đổi tên (${scannedCategories.length})`,
   '',
   ...scannedCategories.map(mappingLine),

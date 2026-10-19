@@ -13,7 +13,7 @@ Bot Discord riêng cho **🐉🪐Động Rồng Galaxy🌸❄**, được tạo 
 
 - `/setup`:
   - **Chỉ tạo phần còn thiếu**: không sửa/xóa cấu trúc hiện có.
-  - **Server mới — tạo toàn bộ cấu trúc**: đặt tên server, tạo đầy đủ role/category/phòng/permission và sắp xếp tự động; không xóa những mục đã có.
+  - **Server mới — tạo toàn bộ cấu trúc**: đặt tên server, tạo đầy đủ role/category/phòng, áp dụng permission từ template và sắp xếp role từ thấp lên cao; không xóa những mục đã có.
   - **Tái cấu trúc an toàn**: đổi tên và sắp xếp chính kênh/role cũ theo ID. Không xóa kênh, không mất lịch sử chat, không gỡ role khỏi thành viên và không ghi đè permission hiện tại.
   - **Đồng bộ cả permission**: chế độ nâng cao; đồng bộ permission từ snapshot nhưng vẫn không xóa kênh hoặc role.
 - `/scan_server`: xuất báo cáo Markdown + JSON và link tải trực tiếp.
@@ -67,6 +67,7 @@ Bot mới mặc định dùng health port `3001`, nên có thể chạy cùng m�
 
 - Bot không có lệnh xóa toàn bộ server.
 - Role/kênh ngoài snapshot không bị xóa.
+- Chỉ `👑・Quản Lý Aiko` và `🌸・Galaxy Master` được cấp Administrator; các cấp quản lý khác dùng permission giới hạn theo nhiệm vụ.
 - Kênh trong snapshot được đổi tên/di chuyển tại chỗ, vì vậy tin nhắn và lịch sử chat vẫn còn nguyên.
 - Role trong snapshot được sửa tại chỗ, không xóa/tạo lại nên membership của thành viên vẫn còn nguyên.
 - Role managed của bot khác không được tạo lại.
