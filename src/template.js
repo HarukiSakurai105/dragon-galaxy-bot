@@ -51,7 +51,7 @@ function decorateChannelTree(channels) {
 }
 
 export const roleSpecs = snapshot.roles
-  .filter(role => !role.managed && role.name !== '@everyone')
+  .filter(role => !role.managed && role.name !== '@everyone' && !communityTheme.retiredRoles?.some(retired => retired.id === role.id))
   .map(role => ({
     ...role,
     originalName: role.name,
@@ -60,6 +60,35 @@ export const roleSpecs = snapshot.roles
   }))
   // Giữ đúng thứ tự position thấp → cao trong file scan JSON/Markdown.
   .sort((a, b) => a.position - b.position);
+
+// Hiển thị Quản lý Vtuber khác ngay dưới Vtuber và Performer trong thứ tự cao → thấp.
+// roleSpecs dùng thứ tự thấp → cao, nên chèn role quản lý ngay trước Performer.
+const vtuberManagerIndex = roleSpecs.findIndex(role => role.id === '1555520206921801758');
+const performerIndex = roleSpecs.findIndex(role => role.id === '1180598996616622100');
+if (vtuberManagerIndex >= 0 && performerIndex >= 0 && vtuberManagerIndex !== performerIndex - 1) {
+  const [vtuberManager] = roleSpecs.splice(vtuberManagerIndex, 1);
+  const updatedPerformerIndex = roleSpecs.findIndex(role => role.id === '1180598996616622100');
+  roleSpecs.splice(updatedPerformerIndex, 0, vtuberManager);
+}
+
+// Dùng role Quản Lý Aiko thay đúng vị trí cao của BBQ Manager đã bỏ.
+const aikoManagerIndex = roleSpecs.findIndex(role => role.id === '1555520791137751100');
+const serverBoostIndex = roleSpecs.findIndex(role => role.id === '1477335395686420601');
+if (aikoManagerIndex >= 0 && serverBoostIndex >= 0 && aikoManagerIndex !== serverBoostIndex + 1) {
+  const [aikoManager] = roleSpecs.splice(aikoManagerIndex, 1);
+  const updatedServerBoostIndex = roleSpecs.findIndex(role => role.id === '1477335395686420601');
+  roleSpecs.splice(updatedServerBoostIndex + 1, 0, aikoManager);
+}
+
+// Thứ tự tăng dần là thấp → cao: Server Boost đứng ngay trước Moderator YouTube,
+// để Discord hiển thị Server Boost ngay dưới Moderator YouTube.
+const serverBoostPosition = roleSpecs.findIndex(role => role.id === '1477335395686420601');
+const moderatorYouTubePosition = roleSpecs.findIndex(role => role.id === '1179113994263470213');
+if (serverBoostPosition >= 0 && moderatorYouTubePosition >= 0 && serverBoostPosition !== moderatorYouTubePosition - 1) {
+  const [serverBoost] = roleSpecs.splice(serverBoostPosition, 1);
+  const updatedModeratorYouTubePosition = roleSpecs.findIndex(role => role.id === '1179113994263470213');
+  roleSpecs.splice(updatedModeratorYouTubePosition, 0, serverBoost);
+}
 
 const scannedCategorySpecs = snapshot.channels
   .filter(channel => channel.type === 'Category')

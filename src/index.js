@@ -2,7 +2,7 @@ import { ActivityType, Client, Events, GatewayIntentBits, REST, Routes } from 'd
 import http from 'node:http';
 import { commandData } from './commands.js';
 import { config, validateConfig } from './config.js';
-import { handleInteraction, sendLeave, sendWelcome } from './interactions.js';
+import { handleInteraction, sendBoost, sendLeave, sendModerationAudit, sendWelcome } from './interactions.js';
 import { validateSnapshot } from './template.js';
 
 validateConfig();
@@ -55,6 +55,8 @@ client.on(Events.GuildDelete, () => { health.guildCount = client.guilds.cache.si
 client.on(Events.InteractionCreate, handleInteraction);
 client.on(Events.GuildMemberAdd, sendWelcome);
 client.on(Events.GuildMemberRemove, sendLeave);
+client.on(Events.GuildMemberUpdate, sendBoost);
+client.on(Events.GuildAuditLogEntryCreate, sendModerationAudit);
 
 process.on('unhandledRejection', error => console.error('Unhandled rejection:', error));
 process.on('uncaughtException', error => console.error('Uncaught exception:', error));

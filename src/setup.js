@@ -38,7 +38,22 @@ function permissionRank(spec) {
 }
 
 function roleSpecsByPermission() {
-  return [...roleSpecs].sort((a, b) => permissionRank(a) - permissionRank(b) || a.position - b.position);
+  const ordered = [...roleSpecs].sort((a, b) => permissionRank(a) - permissionRank(b) || a.position - b.position);
+  const managerIndex = ordered.findIndex(role => role.id === '1555520206921801758');
+  const performerIndex = ordered.findIndex(role => role.id === '1180598996616622100');
+  if (managerIndex >= 0 && performerIndex >= 0 && managerIndex !== performerIndex - 1) {
+    const [manager] = ordered.splice(managerIndex, 1);
+    const updatedPerformerIndex = ordered.findIndex(role => role.id === '1180598996616622100');
+    ordered.splice(updatedPerformerIndex, 0, manager);
+  }
+  const serverBoostIndex = ordered.findIndex(role => role.id === '1477335395686420601');
+  const moderatorYouTubeIndex = ordered.findIndex(role => role.id === '1179113994263470213');
+  if (serverBoostIndex >= 0 && moderatorYouTubeIndex >= 0 && serverBoostIndex !== moderatorYouTubeIndex - 1) {
+    const [serverBoost] = ordered.splice(serverBoostIndex, 1);
+    const updatedModeratorYouTubeIndex = ordered.findIndex(role => role.id === '1179113994263470213');
+    ordered.splice(updatedModeratorYouTubeIndex, 0, serverBoost);
+  }
+  return ordered;
 }
 
 function findRole(guild, name, originalId, roleMap) {
@@ -300,10 +315,12 @@ async function orderStructure(guild, roleMap, channelMap, warnings, roleOrder = 
   let roleOrderMatched = false;
   try {
     if (editableRoles.length) {
+      // Dùng dải vị trí nằm ngay dưới role cao nhất của bot. Vị trí tuyệt đối từ
+      // snapshot có thể vượt quá role bot khi server đích có ít role tích hợp hơn.
       const firstPosition = Math.max(1, guild.members.me.roles.highest.position - editableRoles.length);
       await guild.roles.setPositions(editableRoles.map(({ role, spec }, index) => ({
         role,
-        position: byPermission ? firstPosition + index : spec.position
+        position: firstPosition + index
       })));
       await guild.roles.fetch();
 
@@ -364,6 +381,51 @@ async function removeDeprecatedGeneratedChannels(guild, channelMap, warnings) {
   return removed;
 }
 
+async function removeRetiredRoles(guild, roleMap, warnings, membersVerified) {
+  let removed = 0;
+  for (const retired of communityTheme.retiredRoles || []) {
+    const oldSpec = snapshot.roles.find(role => role.id === retired.id);
+    const oldRole = guild.roles.cache.get(roleMap[retired.id])
+      || guild.roles.cache.find(role => !role.managed && [retired.name, oldSpec?.name, ...(retired.aliases || [])].includes(role.name));
+    if (!oldRole) {
+      delete roleMap[retired.id];
+      continue;
+    }
+
+    const replacement = retired.replacementId ? guild.roles.cache.get(roleMap[retired.replacementId]) : null;
+    if (retired.replacementId && !replacement) {
+      warnings.push(`Chưa xóa role ${oldRole.name}: chưa tìm thấy role thay thế trong server.`);
+      continue;
+    }
+    if (oldRole.managed || !oldRole.editable) {
+      warnings.push(`Chưa xóa role ${oldRole.name}: role đang được quản lý bởi integration hoặc cao hơn role bot.`);
+      continue;
+    }
+
+    if (!membersVerified) {
+      warnings.push(`Chưa xóa role ${oldRole.name}: lần tải danh sách thành viên của setup bị lỗi hoặc bị Discord giới hạn. Chờ hết rate limit rồi chạy lại /setup; role được giữ nguyên.`);
+      continue;
+    }
+    if (oldRole.members.size > 0) {
+      const nextStep = replacement ? ` Hãy chuyển họ sang ${replacement.name} trước rồi chạy lại /setup.` : '';
+      warnings.push(`Chưa xóa role ${oldRole.name}: còn ${oldRole.members.size} thành viên.${nextStep} Bot không tự gỡ role thành viên.`);
+      continue;
+    }
+
+    try {
+      const reason = replacement
+        ? `Thay role BBQ Manager bằng ${replacement.name} theo yêu cầu chủ server`
+        : 'Dọn role không còn sử dụng theo yêu cầu chủ server';
+      await oldRole.delete(reason);
+      delete roleMap[retired.id];
+      removed += 1;
+    } catch (error) {
+      warnings.push(`Không xóa được role ${oldRole.name}: ${error.message}`);
+    }
+  }
+  return removed;
+}
+
 export async function setupFromSnapshot(guild, { sync = false, preserveExisting = true, rebuildRoles = false, progress = async () => {} } = {}) {
   const [, , fetchedMembers] = await Promise.all([
     guild.roles.fetch(),
@@ -379,6 +441,7 @@ export async function setupFromSnapshot(guild, { sync = false, preserveExisting 
   const rolesByName = new Map();
   const warnings = [];
   let removedDeprecatedChannels = 0;
+  let removedRetiredRoles = 0;
   let ordering = { roleOrderMatched: false, orderedRoleCount: 0, lockedRoleCount: 0 };
   let roleRebuild = null;
 
@@ -496,6 +559,8 @@ export async function setupFromSnapshot(guild, { sync = false, preserveExisting 
     }
   }
 
+  if (sync) removedRetiredRoles = await removeRetiredRoles(guild, roleMap, warnings, Boolean(fetchedMembers));
+
   for (const role of guild.roles.cache.values()) if (!rolesByName.has(role.name)) rolesByName.set(role.name, role);
 
   await progress(`Đang đồng bộ ${categorySpecs.length} category...`);
@@ -553,6 +618,7 @@ export async function setupFromSnapshot(guild, { sync = false, preserveExisting 
     preservedHistory: true,
     preservedRoleMemberships: true,
     removedDeprecatedChannels,
+    removedRetiredRoles,
     ordering,
     roleRebuild,
     warnings

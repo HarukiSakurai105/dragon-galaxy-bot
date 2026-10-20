@@ -57,8 +57,7 @@ export const communityTheme = {
     '1245693444513599580': '🖼️・PNG Vtuber',
     '1180598996616622100': '🎤・Vtuber và Performer',
     '1443564327394213898': '💐・Mom Camile',
-    '1477335395686420601': '💎・Người Đặc Biệt',
-    '1178406728069554276': '🍱・BBQ Manager',
+    '1477335395686420601': '🚀・Server Boost',
     '1175522908190281910': '🖤・Rin',
     '1178935450291941427': '🐣・Aikon Mới',
     '1236719320755732553': '🐉・Hộ Vệ Galaxy',
@@ -74,10 +73,16 @@ export const communityTheme = {
     '1117740722163028048': moderatorPermissions,
     '1189470324413173802': moderatorPermissions,
     '1179113994263470213': contentPermissions,
-    '1178406728069554276': contentPermissions,
     '1175522908190281910': [],
     '1477335395686420601': []
   },
+  retiredRoles: [
+    { id: '1178406728069554276', replacementId: '1555520791137751100', name: '🍱・BBQ Manager' },
+    { id: '1170947125618683975', name: '🧑‍🤝‍🧑・Anh Em' },
+    { id: '1311020104087240724', name: '👀・Hội Ngắm Gái' },
+    { id: '1239219201873285180', name: '🌱・Hội Không Chạm Cỏ' },
+    { id: '1227809621469696000', name: '🐟・Cá Ngố Vô Tri' }
+  ],
   channelNames: {
     '1146419909564305408': '📌・BẮT ĐẦU',
     '1151220942027116594': '📡・AIKO MEDIA',

@@ -22,7 +22,12 @@ Bot Discord riêng cho **🐉🪐Động Rồng Galaxy🌸❄**, được tạo 
 - `/panel`: bảng xác minh thành viên hoặc ticket hỗ trợ.
 - Ticket riêng tư, Staff xử lý, đóng xong tự xóa sau 5 phút.
 - Toàn bộ 14 category dùng kiểu `╔★・TÊN SẢNH・★╗`; toàn bộ 61 phòng dùng nhánh `╭` / `├` / `╰` giống mẫu Discord.
-- Welcome/leave log, thông báo, cấp/gỡ role, clear, timeout, kick và ban.
+- `/welcome set|disable`: chọn kênh và sửa mẫu welcome; placeholder `{user}`, `{username}`, `{server}`, `{memberCount}`.
+- `/boost set|disable`: chọn kênh và sửa lời cảm ơn khi thành viên bắt đầu boost; placeholder `{user}`, `{username}`, `{server}`.
+- `/modlog set|disable`: chọn kênh riêng nhận log ban, kick và timeout/voice mute.
+- `/notification-panel`: mở UI riêng tư để bật/tắt và chỉnh kênh/nội dung Welcome, Boost, thông báo thành viên rời; Mod Log được cấu hình riêng.
+- `/help`: giao diện trợ giúp dạng embed có nút chuyển giữa Tổng quan, Cộng đồng, Kiểm duyệt và Setup.
+- Cấp/gỡ role, clear, timeout, kick và ban.
 - Đa server, không cần `GUILD_ID`; dữ liệu mỗi server được lưu riêng.
 
 ## Cài đặt
@@ -45,7 +50,7 @@ BRAND_COLOR=FF8FDB
 PORT=3001
 ```
 
-Trong Discord Developer Portal, bật **Server Members Intent**. Link mời bot phải có `bot` và `applications.commands`; lần setup đầu nên cấp `Administrator`. Kéo role bot lên trên mọi role mà bot cần tạo, sửa hoặc cấp.
+Trong Discord Developer Portal, bật **Server Members Intent**. Link mời bot phải có `bot` và `applications.commands`; lần setup đầu nên cấp `Administrator`. Để nhận audit log ban/kick/mute, bot cần quyền **View Audit Log**. Kéo role bot lên trên mọi role mà bot cần tạo, sửa hoặc cấp.
 
 Bot tự lấy Application ID từ tài khoản bot đã đăng nhập. Không điền ID server vào `CLIENT_ID`; biến này có thể để trống.
 

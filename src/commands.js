@@ -1,4 +1,4 @@
-import { PermissionFlagsBits as P, SlashCommandBuilder } from 'discord.js';
+import { ChannelType, PermissionFlagsBits as P, SlashCommandBuilder } from 'discord.js';
 
 export const commandData = [
   new SlashCommandBuilder().setName('setup').setDescription('Đồng bộ server theo file scan Dragon Galaxy')
@@ -19,6 +19,25 @@ export const commandData = [
     .addStringOption(option => option.setName('nội_dung').setDescription('Nội dung').setRequired(true))
     .addChannelOption(option => option.setName('kênh').setDescription('Kênh nhận; mặc định kênh hiện tại'))
     .setDefaultMemberPermissions(P.ManageMessages),
+  new SlashCommandBuilder().setName('welcome').setDescription('Tùy chỉnh thông báo thành viên mới')
+    .addSubcommand(sub => sub.setName('set').setDescription('Đặt kênh và nội dung welcome')
+      .addChannelOption(o => o.setName('kênh').setDescription('Kênh đăng welcome').setRequired(true).addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement))
+      .addStringOption(o => o.setName('nội_dung').setDescription('Dùng {user}, {username}, {server}, {memberCount}').setRequired(true).setMaxLength(1000)))
+    .addSubcommand(sub => sub.setName('disable').setDescription('Tắt welcome tự động'))
+    .setDefaultMemberPermissions(P.ManageGuild),
+  new SlashCommandBuilder().setName('boost').setDescription('Tùy chỉnh thông báo server boost')
+    .addSubcommand(sub => sub.setName('set').setDescription('Đặt kênh và nội dung cảm ơn boost')
+      .addChannelOption(o => o.setName('kênh').setDescription('Kênh đăng boost').setRequired(true).addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement))
+      .addStringOption(o => o.setName('nội_dung').setDescription('Dùng {user}, {username}, {server}').setRequired(true).setMaxLength(1000)))
+    .addSubcommand(sub => sub.setName('disable').setDescription('Tắt thông báo boost tự động'))
+    .setDefaultMemberPermissions(P.ManageGuild),
+  new SlashCommandBuilder().setName('modlog').setDescription('Cài log ban, kick và mute')
+    .addSubcommand(sub => sub.setName('set').setDescription('Đặt kênh nhận log kiểm duyệt')
+      .addChannelOption(o => o.setName('kênh').setDescription('Kênh log riêng tư').setRequired(true).addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)))
+    .addSubcommand(sub => sub.setName('disable').setDescription('Tắt log kiểm duyệt'))
+    .setDefaultMemberPermissions(P.ManageGuild),
+  new SlashCommandBuilder().setName('notification-panel').setDescription('Mở UI cấu hình welcome, boost, rời server và log')
+    .setDefaultMemberPermissions(P.ManageGuild),
   new SlashCommandBuilder().setName('role').setDescription('Cấp hoặc gỡ role cho thành viên')
     .addSubcommand(sub => sub.setName('add').setDescription('Cấp role').addUserOption(o => o.setName('thành_viên').setDescription('Thành viên').setRequired(true)).addRoleOption(o => o.setName('role').setDescription('Role').setRequired(true)))
     .addSubcommand(sub => sub.setName('remove').setDescription('Gỡ role').addUserOption(o => o.setName('thành_viên').setDescription('Thành viên').setRequired(true)).addRoleOption(o => o.setName('role').setDescription('Role').setRequired(true)))
